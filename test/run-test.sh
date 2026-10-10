@@ -33,7 +33,8 @@ for sh_file in \
     "theme/libadwaita/setup-libadwaita.sh" \
     "apps/youtube-music/patch-youtube-music.sh" \
     "apps/youtube-music/restore-youtube-music.sh" \
-    "scripts/install-extensions.sh"; do
+    "scripts/install-extensions.sh" \
+    "scripts/install-youtube-music.sh"; do
     bash -n "$sh_file"
     echo "  ✓ $sh_file syntax valid"
 done

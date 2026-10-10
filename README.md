@@ -116,15 +116,44 @@ Libadwaita apps (Nautilus, Calculator, Software, Settings) read their styling fr
 
 To adjust overall window transparency, simply edit the alpha value (`0.75`) in `window_bg_color` and `sidebar_bg_color`.
 
-### 2. YouTube Music Flatpak Patch (`apps/youtube-music/`)
-The patcher enables transparency for `com.github.th_ch.youtube_music`:
+### 2. YouTube Music Flatpak Setup & Patch (`apps/youtube-music/`)
+
+> [!NOTE]
+> The YouTube Music desktop app (`th-ch/youtube-music` / `pear-desktop`) is **not available on Flathub**. It is distributed as a standalone `.flatpak` bundle via GitHub Releases.
+
+#### Installing YouTube Music Flatpak
+
+You can install it either automatically via our script or manually from GitHub:
+
+- **Automated (Recommended)**:
+  ```bash
+  # Automatically downloads the latest GitHub release bundle and installs it
+  bash scripts/install-youtube-music.sh
+  ```
+  *(Or run `./install.sh` and accept the prompt to download and install it).*
+
+- **Manual**:
+  1. Download the latest `YouTube-Music-*-x86_64.flatpak` bundle from the [Pear Desktop / YouTube Music Releases](https://github.com/pear-devs/pear-desktop/releases).
+  2. Install the downloaded bundle:
+     ```bash
+     flatpak install YouTube-Music-*-x86_64.flatpak
+     ```
+
+#### Applying the Glassy Transparency Patch
+
+Once installed, apply the transparency patch:
+```bash
+./install.sh --youtube-music
+```
+
+What the patcher does:
 - Unpacks the Flatpak's `app.asar` archive.
 - Reconfigures `new BrowserWindow({ transparent: true, backgroundColor: "#00000000" })`.
 - Adds `--enable-transparent-visuals` to Chromium launch arguments.
 - Unlocks the built-in `transparent-player` plugin for Linux (`Platform.Linux`).
 - Uses Flatpak's native `--app-path` parameter with a Btrfs CoW clone, consuming **0 bytes** duplicate disk storage.
 
-You can also fine-tune opacity directly inside the app:
+You can fine-tune your desired background opacity directly inside the app:
 > **YouTube Music** → **Plugins** → **Transparent Player** → **Opacity (10% - 100%)**
 
 ### 3. Blur my Shell Presets (`configs/blur-my-shell-glassy.dconf`)

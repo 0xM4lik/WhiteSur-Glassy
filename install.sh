@@ -82,7 +82,8 @@ print_dependency_status() {
             echo "  [✓] YouTube Music Flatpak: Installed"
         else
             echo "  [!] YouTube Music Flatpak: Not installed"
-            echo "      (Install via: flatpak install flathub com.github.th_ch.youtube_music)"
+            echo "      (Not on Flathub: download from https://github.com/pear-devs/pear-desktop/releases)"
+            echo "      (Or install via: flatpak install YouTube-Music-*-x86_64.flatpak)"
         fi
     else
         echo "  [✗] Flatpak: NOT FOUND"
@@ -161,13 +162,16 @@ else
             read -p "Patch YouTube Music Flatpak for transparency? [y/N]: " ans_ytm
             case "$ans_ytm" in [yY]*) INSTALL_YTM=true ;; esac
         else
-            read -p "YouTube Music Flatpak is not installed. Would you like to install it from Flathub now? [y/N]: " ans_install_ytm
+            echo "Note: YouTube Music is not on Flathub (distributed via GitHub Releases)."
+            read -p "Would you like to download and install YouTube Music Flatpak from GitHub now? [y/N]: " ans_install_ytm
             case "$ans_install_ytm" in
                 [yY]*)
-                    echo "-> Installing com.github.th_ch.youtube_music from Flathub..."
-                    flatpak install -y flathub com.github.th_ch.youtube_music
-                    HAS_YTM=true
-                    INSTALL_YTM=true
+                    if [ -f "$SCRIPT_DIR/scripts/install-youtube-music.sh" ]; then
+                        if bash "$SCRIPT_DIR/scripts/install-youtube-music.sh"; then
+                            HAS_YTM=true
+                            INSTALL_YTM=true
+                        fi
+                    fi
                     ;;
                 *)
                     echo "[!] Skipping YouTube Music patch."
@@ -226,7 +230,12 @@ if [ "$INSTALL_YTM" = true ]; then
         echo "[!] Cannot patch YouTube Music: 'flatpak' command not found."
     elif [ "$HAS_YTM" = false ]; then
         echo "[!] YouTube Music Flatpak (com.github.th_ch.youtube_music) is not installed."
-        echo "    Install it via: flatpak install flathub com.github.th_ch.youtube_music"
+        echo "    Note: YouTube Music is not available on Flathub."
+        echo "    Download the .flatpak bundle from: https://github.com/pear-devs/pear-desktop/releases"
+        echo "    Install with: flatpak install YouTube-Music-*-x86_64.flatpak"
+        if [ -f "$SCRIPT_DIR/scripts/install-youtube-music.sh" ]; then
+            echo "    Or run: bash scripts/install-youtube-music.sh"
+        fi
         echo "    Then rerun: ./install.sh --youtube-music"
     else
         echo "-> Patching YouTube Music Flatpak..."

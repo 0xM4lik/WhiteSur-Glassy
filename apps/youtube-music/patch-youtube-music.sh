@@ -16,21 +16,31 @@ fi
 
 if [ ! -d "$APP_SYSTEM_DIR" ] && [ ! -d "$APP_USER_DIR" ]; then
     echo "Notice: YouTube Music Flatpak ($FLATPAK_ID) is not installed."
-    if [ -t 0 ]; then
-        read -p "Would you like to install $FLATPAK_ID from Flathub now? [y/N]: " ans_install
+    echo "Note: YouTube Music is not on Flathub (distributed via GitHub Releases as .flatpak)."
+    PATCH_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    INSTALL_HELPER="$PATCH_SCRIPT_DIR/../../scripts/install-youtube-music.sh"
+
+    if [ -t 0 ] && [ -f "$INSTALL_HELPER" ]; then
+        read -p "Would you like to download and install the latest Flatpak release from GitHub now? [y/N]: " ans_install
         case "$ans_install" in
             [yY]*)
-                echo "Installing $FLATPAK_ID from Flathub..."
-                flatpak install -y flathub "$FLATPAK_ID"
+                echo "Downloading and installing YouTube Music Flatpak from GitHub..."
+                bash "$INSTALL_HELPER"
                 ;;
             *)
-                echo "Skipping patch. Install it via: flatpak install flathub $FLATPAK_ID"
+                echo "Skipping patch."
+                echo "Download the .flatpak bundle from: https://github.com/pear-devs/pear-desktop/releases"
+                echo "Install it via: flatpak install YouTube-Music-*-x86_64.flatpak"
                 exit 1
                 ;;
         esac
     else
         echo "Error: YouTube Music Flatpak ($FLATPAK_ID) is not installed."
-        echo "Install it via: flatpak install flathub $FLATPAK_ID"
+        echo "Download the .flatpak bundle from: https://github.com/pear-devs/pear-desktop/releases"
+        echo "Install it via: flatpak install YouTube-Music-*-x86_64.flatpak"
+        if [ -f "$INSTALL_HELPER" ]; then
+            echo "Or run: bash scripts/install-youtube-music.sh"
+        fi
         exit 1
     fi
 fi
