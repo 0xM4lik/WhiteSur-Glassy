@@ -76,20 +76,23 @@ cd WhiteSur-Glassy
 You can install all components interactively, or pass specific flags:
 
 ```bash
-# Install everything (Themes, Extensions, YouTube Music patch, Blur my Shell presets)
+# Install everything (Themes, Apple Traffic Lights, Icons, Extensions, YouTube Music patch, Extension Presets)
 ./install.sh --all
 
-# Install only GTK & Libadwaita themes
+# Install GTK & Libadwaita glassy theme + Apple window traffic lights
 ./install.sh --theme
 
-# Install only recommended GNOME extensions
+# Install WhiteSur Apple-style icon theme
+./install.sh --icons
+
+# Install recommended GNOME extensions (Dash to Dock, Blur my Shell, Logo Menu, User Themes)
 ./install.sh --extensions
 
-# Patch only YouTube Music Flatpak
+# Patch YouTube Music Flatpak for transparency
 ./install.sh --youtube-music
 
-# Apply recommended Blur my Shell dconf presets
-./install.sh --blur-settings
+# Apply recommended extension presets (Dash to Dock, Blur my Shell, Logo Menu)
+./install.sh --configs
 
 # Check dependencies and system status without installing
 ./install.sh --check
@@ -99,8 +102,8 @@ You can install all components interactively, or pass specific flags:
 
 ## Configuration Breakdown
 
-### 1. Libadwaita Overrides (`theme/libadwaita/gtk-WhiteSur-glassy.css`)
-Libadwaita apps (Nautilus, Calculator, Software, Settings) read their styling from `~/.config/gtk-4.0/gtk.css`. WhiteSur-Glassy defines:
+### 1. Libadwaita Overrides & Apple Window Controls (`theme/libadwaita/`)
+Libadwaita apps (Nautilus, Calculator, Software, Settings) read their styling from `~/.config/gtk-4.0/gtk.css`:
 
 ```css
 /* Color Palette */
@@ -114,9 +117,14 @@ Libadwaita apps (Nautilus, Calculator, Software, Settings) read their styling fr
 @define-color card_bg_color rgba(255, 255, 255, 0.08);
 ```
 
-To adjust overall window transparency, simply edit the alpha value (`0.75`) in `window_bg_color` and `sidebar_bg_color`.
+- **Apple Window Traffic Lights**: Window controls are aligned to the top-left (`close,minimize,maximize:`) with borderless, circular macOS traffic lights (Red/Yellow/Green dots with hover symbols).
+- To adjust overall window transparency, edit the alpha value (`0.75`) in `window_bg_color` and `sidebar_bg_color`.
 
-### 2. YouTube Music Flatpak Setup & Patch (`apps/youtube-music/`)
+### 2. WhiteSur Icon Theme (`scripts/install-icons.sh`)
+- Automated installer for [vinceliuice/WhiteSur-icon-theme](https://github.com/vinceliuice/WhiteSur-icon-theme).
+- Provides Apple macOS Big Sur/Monterey high-resolution vector application, folder, and system status icons.
+
+### 3. YouTube Music Flatpak Setup & Patch (`apps/youtube-music/`)
 
 > [!NOTE]
 > The YouTube Music desktop app (`th-ch/youtube-music` / `pear-desktop`) is **not available on Flathub**. It is distributed as a standalone `.flatpak` bundle via GitHub Releases.
@@ -156,11 +164,17 @@ What the patcher does:
 You can fine-tune your desired background opacity directly inside the app:
 > **YouTube Music** → **Plugins** → **Transparent Player** → **Opacity (10% - 100%)**
 
-### 3. Blur my Shell Presets (`configs/blur-my-shell-glassy.dconf`)
-Recommended extension settings include:
-- Whitelist containing Nautilus, Calculator, Software, Ptyxis, Settings, and YouTube Music.
-- Rounded blur pipelines with 14px corner radius.
-- Gaussian blur settings tuned for optimal clarity (`sigma: 10`, `brightness: 1.0`).
+### 4. Extension Configurations (`configs/`)
+
+- **Blur my Shell (`configs/blur-my-shell-glassy.dconf`)**:
+  - Whitelist containing Nautilus, Calculator, Software, Ptyxis, Settings, and YouTube Music.
+  - Dual pipelines: rounded blur for dock and popups (`corner-radius: 24`, `sigma: 10`), standard gaussian blur for windows (`sigma: 10`, `brightness: 1.0`).
+- **Dash to Dock (`configs/dash-to-dock-glassy.dconf`)**:
+  - Centered macOS-style floating dock at bottom of the primary monitor.
+  - 80% background opacity (`0.80`), 48px icons, intelligent auto-hide, and minimized animations.
+- **Logo Menu (`configs/logo-menu-glassy.dconf`)**:
+  - Apple symbolic logo on the top-left panel corner.
+  - Quick launcher configured for system monitoring (`Resources`).
 
 ---
 

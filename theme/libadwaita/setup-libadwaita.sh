@@ -23,6 +23,32 @@ if [ "$ACTION" = "install" ]; then
     # Copy the glassy stylesheet into the config directory
     cp -f "$SOURCE_CSS" "$TARGET_DIR/gtk-WhiteSur-glassy.css"
 
+    # Ensure Libadwaita window control assets (Apple traffic lights) are in place
+    if [ ! -d "$TARGET_DIR/windows-assets" ]; then
+        echo "Setting up Apple traffic lights window assets..."
+        if [ -d "$SCRIPT_DIR/windows-assets" ]; then
+            cp -rf "$SCRIPT_DIR/windows-assets" "$TARGET_DIR/"
+        elif [ -d "$HOME/Tweaks/WhiteSur-gtk-theme/src/assets/gtk/windows-assets/titlebutton" ]; then
+            cp -rf "$HOME/Tweaks/WhiteSur-gtk-theme/src/assets/gtk/windows-assets/titlebutton" "$TARGET_DIR/windows-assets"
+        elif command -v git >/dev/null 2>&1; then
+            TMP_GTK=$(mktemp -d)
+            if git clone --depth=1 https://github.com/vinceliuice/WhiteSur-gtk-theme.git "$TMP_GTK" 2>/dev/null; then
+                if [ -d "$TMP_GTK/src/assets/gtk/windows-assets/titlebutton" ]; then
+                    cp -rf "$TMP_GTK/src/assets/gtk/windows-assets/titlebutton" "$TARGET_DIR/windows-assets"
+                fi
+            fi
+            rm -rf "$TMP_GTK"
+        fi
+    fi
+
+    if [ ! -f "$TARGET_DIR/gtk-WhiteSur-Dark.css" ]; then
+        if [ -f "$SCRIPT_DIR/gtk-WhiteSur-Dark.css" ]; then
+            cp -f "$SCRIPT_DIR/gtk-WhiteSur-Dark.css" "$TARGET_DIR/gtk-WhiteSur-Dark.css"
+        elif [ -f "$TARGET_DIR/gtk-Dark.css" ]; then
+            cp -f "$TARGET_DIR/gtk-Dark.css" "$TARGET_DIR/gtk-WhiteSur-Dark.css"
+        fi
+    fi
+
     # Symlink gtk.css and gtk-dark.css
     ln -sf "$TARGET_DIR/gtk-WhiteSur-glassy.css" "$TARGET_DIR/gtk.css"
     ln -sf "$TARGET_DIR/gtk-WhiteSur-glassy.css" "$TARGET_DIR/gtk-dark.css"

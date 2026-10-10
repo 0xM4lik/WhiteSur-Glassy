@@ -7,13 +7,16 @@ DEST_THEMES_DIR="${XDG_DATA_HOME:-$HOME/.themes}"
 
 echo "=== WhiteSur-Glassy Uninstaller ==="
 
-# 1. Reset GTK theme to default if WhiteSur-glassy is active
+# 1. Reset GTK theme & window buttons to default if WhiteSur-glassy is active
 if command -v gsettings >/dev/null 2>&1; then
     CURRENT_THEME=$(gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null || echo "")
     if [ "$CURRENT_THEME" = "'WhiteSur-glassy'" ]; then
         echo "-> Reverting GTK theme to default..."
         gsettings set org.gnome.desktop.interface gtk-theme "Adwaita" 2>/dev/null || true
     fi
+
+    echo "-> Reverting window controls button layout..."
+    gsettings set org.gnome.desktop.wm.preferences button-layout ":appmenu,close" 2>/dev/null || true
 fi
 
 # 2. Remove GTK Theme

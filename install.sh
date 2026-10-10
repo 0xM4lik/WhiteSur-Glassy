@@ -9,9 +9,10 @@ USER_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/gtk-4.0"
 
 INSTALL_THEME=false
 INSTALL_LIBADWAITA=false
+INSTALL_ICONS=false
 INSTALL_EXTENSIONS=false
 INSTALL_YTM=false
-INSTALL_BLUR=false
+INSTALL_CONFIGS=false
 
 # ==============================================================================
 # Dependency Checking Helpers
@@ -25,11 +26,16 @@ HAS_GNOME_EXT=false
 HAS_FLATPAK=false
 HAS_YTM=false
 HAS_DCONF=false
+HAS_ICONS=false
 
 check_tool python3 && HAS_PYTHON=true
 check_tool gnome-extensions && HAS_GNOME_EXT=true
 check_tool flatpak && HAS_FLATPAK=true
 check_tool dconf && HAS_DCONF=true
+
+if [ -d "$HOME/.local/share/icons/WhiteSur" ] || [ -d "/usr/share/icons/WhiteSur" ]; then
+    HAS_ICONS=true
+fi
 
 if [ "$HAS_FLATPAK" = true ]; then
     if flatpak list 2>/dev/null | grep -q "com.github.th_ch.youtube_music" || \
@@ -44,11 +50,13 @@ show_help() {
 Usage: ./install.sh [OPTIONS]
 
 Options:
-  --all            Install all components (Theme, Libadwaita, Extensions, YouTube Music, Blur settings)
-  --theme          Install GTK 2/3/4 theme and Libadwaita glassy overrides
+  --all            Install all components (Themes, Window Controls, Icons, Extensions, YouTube Music, Extension Configs)
+  --theme          Install GTK 2/3/4 theme, Libadwaita glassy overrides, and Apple window traffic lights
+  --icons          Install WhiteSur Apple-style icon theme
   --extensions     Install recommended GNOME extensions (Dash to Dock, Blur my Shell, Logo Menu, User Themes)
   --youtube-music  Patch YouTube Music Flatpak for glassy transparency
-  --blur-settings  Apply recommended Blur my Shell dconf presets
+  --configs        Apply recommended extension configurations (Dash to Dock, Blur my Shell, Logo Menu)
+  --blur-settings  Alias for --configs
   --check          Only check dependencies and environment status
   --help, -h       Show this help message
 
@@ -76,6 +84,13 @@ print_dependency_status() {
         echo "      Arch:   sudo pacman -S gnome-shell"
     fi
 
+    if [ "$HAS_ICONS" = true ]; then
+        echo "  [✓] WhiteSur Icon Theme: Installed"
+    else
+        echo "  [!] WhiteSur Icon Theme: Not installed"
+        echo "      (Install via: ./install.sh --icons)"
+    fi
+
     if [ "$HAS_FLATPAK" = true ]; then
         echo "  [✓] Flatpak: $(flatpak --version 2>&1)"
         if [ "$HAS_YTM" = true ]; then
@@ -93,7 +108,7 @@ print_dependency_status() {
     if [ "$HAS_DCONF" = true ]; then
         echo "  [✓] dconf: Available"
     else
-        echo "  [!] dconf: Not found (required to auto-load Blur my Shell presets)"
+        echo "  [!] dconf: Not found (required to auto-load extension presets)"
     fi
     echo "============================================="
 }
@@ -105,14 +120,19 @@ if [ $# -gt 0 ]; then
             --all)
                 INSTALL_THEME=true
                 INSTALL_LIBADWAITA=true
+                INSTALL_ICONS=true
                 INSTALL_EXTENSIONS=true
                 INSTALL_YTM=true
-                INSTALL_BLUR=true
+                INSTALL_CONFIGS=true
                 shift
                 ;;
             --theme)
                 INSTALL_THEME=true
                 INSTALL_LIBADWAITA=true
+                shift
+                ;;
+            --icons)
+                INSTALL_ICONS=true
                 shift
                 ;;
             --extensions)
@@ -123,8 +143,8 @@ if [ $# -gt 0 ]; then
                 INSTALL_YTM=true
                 shift
                 ;;
-            --blur-settings)
-                INSTALL_BLUR=true
+            --configs|--extension-configs|--blur-settings)
+                INSTALL_CONFIGS=true
                 shift
                 ;;
             --check)
@@ -147,8 +167,11 @@ else
     print_dependency_status
     echo ""
 
-    read -p "Install WhiteSur-glassy GTK & Libadwaita theme? [Y/n]: " ans_theme
+    read -p "Install WhiteSur-glassy GTK & Libadwaita theme (with Apple traffic lights)? [Y/n]: " ans_theme
     case "${ans_theme:-y}" in [yY]*) INSTALL_THEME=true; INSTALL_LIBADWAITA=true ;; esac
+
+    read -p "Install WhiteSur Apple-style icon theme? [y/N]: " ans_icons
+    case "$ans_icons" in [yY]*) INSTALL_ICONS=true ;; esac
 
     if [ "$HAS_GNOME_EXT" = true ]; then
         read -p "Install recommended GNOME extensions (Dash to Dock, Blur my Shell, Logo Menu, User Themes)? [y/N]: " ans_ext
@@ -183,15 +206,15 @@ else
     fi
 
     if [ "$HAS_DCONF" = true ]; then
-        read -p "Apply recommended Blur my Shell presets? [y/N]: " ans_blur
-        case "$ans_blur" in [yY]*) INSTALL_BLUR=true ;; esac
+        read -p "Apply recommended extension configurations (Dash to Dock, Blur my Shell, Logo Menu)? [y/N]: " ans_configs
+        case "$ans_configs" in [yY]*) INSTALL_CONFIGS=true ;; esac
     fi
 fi
 
 echo ""
 echo "Starting installation..."
 
-# 1. Install GTK Theme
+# 1. Install GTK Theme & Configure Apple Window Traffic Lights
 if [ "$INSTALL_THEME" = true ]; then
     echo "-> Installing GTK Theme to $DEST_THEMES_DIR/WhiteSur-glassy..."
     mkdir -p "$DEST_THEMES_DIR"
@@ -200,11 +223,13 @@ if [ "$INSTALL_THEME" = true ]; then
     if command -v gsettings >/dev/null 2>&1; then
         echo "-> Setting GTK theme to WhiteSur-glassy..."
         gsettings set org.gnome.desktop.interface gtk-theme "WhiteSur-glassy" 2>/dev/null || true
+        echo "-> Configuring Apple window traffic lights layout (left-aligned)..."
+        gsettings set org.gnome.desktop.wm.preferences button-layout "close,minimize,maximize:" 2>/dev/null || true
     fi
     if command -v dconf >/dev/null 2>&1; then
         dconf write /org/gnome/shell/extensions/user-theme/name "'WhiteSur-glassy'" 2>/dev/null || true
     fi
-    echo "[✓] GTK theme installed."
+    echo "[✓] GTK theme & Apple traffic lights configured."
 fi
 
 # 2. Setup Libadwaita overrides
@@ -214,7 +239,15 @@ if [ "$INSTALL_LIBADWAITA" = true ]; then
     echo "[✓] Libadwaita glassy theme installed."
 fi
 
-# 3. Install GNOME Extensions
+# 3. Install WhiteSur Icons
+if [ "$INSTALL_ICONS" = true ]; then
+    echo "-> Installing WhiteSur icon theme..."
+    if [ -f "$SCRIPT_DIR/scripts/install-icons.sh" ]; then
+        bash "$SCRIPT_DIR/scripts/install-icons.sh"
+    fi
+fi
+
+# 4. Install GNOME Extensions
 if [ "$INSTALL_EXTENSIONS" = true ]; then
     if [ "$HAS_GNOME_EXT" = true ]; then
         echo "-> Installing recommended GNOME extensions..."
@@ -227,7 +260,7 @@ if [ "$INSTALL_EXTENSIONS" = true ]; then
     fi
 fi
 
-# 4. Patch YouTube Music Flatpak
+# 5. Patch YouTube Music Flatpak
 if [ "$INSTALL_YTM" = true ]; then
     if [ "$HAS_FLATPAK" = false ]; then
         echo "[!] Cannot patch YouTube Music: 'flatpak' command not found."
@@ -247,12 +280,24 @@ if [ "$INSTALL_YTM" = true ]; then
     fi
 fi
 
-# 5. Blur my Shell configuration
-if [ "$INSTALL_BLUR" = true ]; then
-    if [ "$HAS_DCONF" = true ] && [ -f "$SCRIPT_DIR/configs/blur-my-shell-glassy.dconf" ]; then
-        echo "-> Applying Blur my Shell configuration..."
-        dconf load /org/gnome/shell/extensions/blur-my-shell/ < "$SCRIPT_DIR/configs/blur-my-shell-glassy.dconf"
-        echo "[✓] Blur my Shell presets applied."
+# 6. Extension Configurations (Dash to Dock, Blur my Shell, Logo Menu)
+if [ "$INSTALL_CONFIGS" = true ]; then
+    echo "-> Applying extension configurations..."
+    if [ "$HAS_DCONF" = true ]; then
+        if [ -f "$SCRIPT_DIR/configs/blur-my-shell-glassy.dconf" ]; then
+            dconf load /org/gnome/shell/extensions/blur-my-shell/ < "$SCRIPT_DIR/configs/blur-my-shell-glassy.dconf"
+            echo "  [✓] Blur my Shell presets applied."
+        fi
+        if [ -f "$SCRIPT_DIR/configs/dash-to-dock-glassy.dconf" ]; then
+            dconf load /org/gnome/shell/extensions/dash-to-dock/ < "$SCRIPT_DIR/configs/dash-to-dock-glassy.dconf"
+            echo "  [✓] Dash to Dock presets applied."
+        fi
+        if [ -f "$SCRIPT_DIR/configs/logo-menu-glassy.dconf" ]; then
+            dconf load /org/gnome/shell/extensions/Logo-menu/ < "$SCRIPT_DIR/configs/logo-menu-glassy.dconf"
+            echo "  [✓] Logo Menu presets applied."
+        fi
+        dconf write /org/gnome/shell/extensions/user-theme/name "'WhiteSur-glassy'" 2>/dev/null || true
+        echo "[✓] All extension configurations applied."
     else
         echo "[!] dconf command not available or preset file missing. Skipping."
     fi

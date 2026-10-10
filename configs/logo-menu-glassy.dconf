@@ -1,0 +1,8 @@
+[/]
+hide-icon-shadow=false
+menu-button-icon-image=0
+menu-button-system-monitor='flatpak run net.nokyan.Resources'
+show-activities-button=false
+show-power-options=true
+symbolic-icon=true
+use-custom-icon=false
