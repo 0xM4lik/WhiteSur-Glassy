@@ -9,7 +9,7 @@ sigma=59
 style-dialogs=1
 
 [applications]
-blacklist=['Plank', 'com.desktop.ding', 'Conky', 'steam', 'gamescope', 'vlc', 'mpv', 'org.gnome.Software']
+blacklist=['Plank', 'com.desktop.ding', 'Conky', 'steam', 'gamescope', 'vlc', 'mpv']
 blur=true
 blur-on-overview=false
 brightness=1.0
