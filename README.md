@@ -48,7 +48,7 @@ When using the [Blur my Shell](https://github.com/aunetx/blur-my-shell) extensio
 
 ## Recommended GNOME Extensions
 
-WhiteSur-Glassy includes an automated extension installer (`./install.sh --extensions`) that queries [extensions.gnome.org](https://extensions.gnome.org), downloads the version matching your GNOME Shell release, and enables them:
+WhiteSur-Glassy includes an automated extension installer (`./install.sh --extensions`) that queries [extensions.gnome.org](https://extensions.gnome.org), downloads the version matching your GNOME Shell release, compiles extension schemas, and automatically activates them by default in GSettings & dconf (no manual GUI toggling required):
 
 | Extension | UUID | Purpose |
 | :--- | :--- | :--- |

@@ -201,6 +201,9 @@ if [ "$INSTALL_THEME" = true ]; then
         echo "-> Setting GTK theme to WhiteSur-glassy..."
         gsettings set org.gnome.desktop.interface gtk-theme "WhiteSur-glassy" 2>/dev/null || true
     fi
+    if command -v dconf >/dev/null 2>&1; then
+        dconf write /org/gnome/shell/extensions/user-theme/name "'WhiteSur-glassy'" 2>/dev/null || true
+    fi
     echo "[✓] GTK theme installed."
 fi
 
