@@ -19,3 +19,4 @@ package-lock.json
 # Test outputs
 test/output/
 scratch/
+test/
