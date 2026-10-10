@@ -7,25 +7,21 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOURCE_CSS="$SCRIPT_DIR/gtk-WhiteSur-glassy.css"
 
 if [ "$ACTION" = "install" ]; then
-    echo "Installing WhiteSur-Glassy Libadwaita overrides..."
+    echo "Setting up GTK 4 / Libadwaita theme..."
     mkdir -p "$TARGET_DIR"
 
     # Backup existing gtk.css if not already backed up
     if [ -f "$TARGET_DIR/gtk.css" ] && [ ! -L "$TARGET_DIR/gtk.css" ]; then
         cp -f "$TARGET_DIR/gtk.css" "$TARGET_DIR/gtk.css.bak"
-        echo "Backed up existing gtk.css to gtk.css.bak"
     fi
     if [ -f "$TARGET_DIR/gtk-dark.css" ] && [ ! -L "$TARGET_DIR/gtk-dark.css" ]; then
         cp -f "$TARGET_DIR/gtk-dark.css" "$TARGET_DIR/gtk-dark.css.bak"
-        echo "Backed up existing gtk-dark.css to gtk-dark.css.bak"
     fi
 
-    # Copy the glassy stylesheet into the config directory
     cp -f "$SOURCE_CSS" "$TARGET_DIR/gtk-WhiteSur-glassy.css"
 
-    # Ensure Libadwaita window control assets (Apple traffic lights) are in place
+    # Copy window controls assets
     if [ ! -d "$TARGET_DIR/windows-assets" ]; then
-        echo "Setting up Apple traffic lights window assets..."
         if [ -d "$SCRIPT_DIR/windows-assets" ]; then
             cp -rf "$SCRIPT_DIR/windows-assets" "$TARGET_DIR/"
         elif [ -d "$HOME/Tweaks/WhiteSur-gtk-theme/src/assets/gtk/windows-assets/titlebutton" ]; then
@@ -49,16 +45,14 @@ if [ "$ACTION" = "install" ]; then
         fi
     fi
 
-    # Symlink gtk.css and gtk-dark.css
     ln -sf "$TARGET_DIR/gtk-WhiteSur-glassy.css" "$TARGET_DIR/gtk.css"
     ln -sf "$TARGET_DIR/gtk-WhiteSur-glassy.css" "$TARGET_DIR/gtk-dark.css"
-    echo "Libadwaita glassy theme active in $TARGET_DIR."
+    echo "Libadwaita theme applied."
 
 elif [ "$ACTION" = "uninstall" ]; then
-    echo "Removing WhiteSur-Glassy Libadwaita overrides..."
+    echo "Removing Libadwaita theme overrides..."
     rm -f "$TARGET_DIR/gtk-WhiteSur-glassy.css"
     
-    # Restore backups if present
     if [ -f "$TARGET_DIR/gtk.css.bak" ]; then
         mv -f "$TARGET_DIR/gtk.css.bak" "$TARGET_DIR/gtk.css"
     else
@@ -70,7 +64,7 @@ elif [ "$ACTION" = "uninstall" ]; then
     else
         rm -f "$TARGET_DIR/gtk-dark.css"
     fi
-    echo "Libadwaita overrides restored."
+    echo "Restored previous Libadwaita config."
 else
     echo "Usage: $0 [install|uninstall]"
     exit 1

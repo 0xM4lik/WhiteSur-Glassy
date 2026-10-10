@@ -1,70 +1,23 @@
-<div align="center">
-
 # WhiteSur-Glassy
 
-**A curated frosted-glass desktop theme suite for GNOME & Blur my Shell.**
+A modified version of the WhiteSur GTK and GNOME Shell theme with transparency support for [Blur my Shell](https://github.com/aunetx/blur-my-shell).
 
-Translucent GTK 3, GTK 4, and Libadwaita application styling with sharp, 100% readable text, authentic Apple window traffic lights, and glassy terminal transparency.
+Normally, applying Blur my Shell to GTK4 and Libadwaita apps doesn't work well because GNOME apps have solid backgrounds, or global opacity tools wash out the text and buttons. This theme makes window backgrounds 75% transparent so Mutter can blur behind them, while keeping text, icons, and buttons fully opaque and easy to read.
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![GNOME](https://img.shields.io/badge/GNOME-45%20|%2046%20|%2047%20|%2050+-3584e4.svg?logo=gnome)](https://www.gnome.org/)
-[![Libadwaita](https://img.shields.io/badge/Libadwaita-Supported-brightgreen.svg)](https://gitlab.gnome.org/GNOME/libadwaita)
+## Features
 
-</div>
-
----
-
-## Overview
-
-### The Problem
-When using the [Blur my Shell](https://github.com/aunetx/blur-my-shell) extension on GNOME, window transparency is often frustrating:
-- **Global window opacity hacks** make everything transparent — including text, buttons, and icons — making applications difficult to read.
-- **Stock GTK and Libadwaita applications** (like Files/Nautilus, Calculator, and Software) hardcode multiple solid background layers, rendering as flat opaque grey boxes even when whitelisted.
-- **Default terminals** require manual diving into preferences to configure opacity.
-- **Stock button outlines** create distracting borders on translucent frosted glass backgrounds.
-
-### The Solution: WhiteSur-Glassy
-**WhiteSur-Glassy** transforms your desktop into an authentic frosted-glass interface:
-1. **~75% Translucent Background Surfaces**: Window backdrops, sidebars, and navigation bars allow desktop wallpaper blur to shine through.
-2. **100% Opaque & Crisp Foregrounds**: Text, icons, buttons, and inputs remain sharp, high-contrast, and fully readable with zero borders.
-3. **No Double-Layering**: Deep container hierarchies in Nautilus and Libadwaita are stripped of opaque background overrides.
-4. **Apple Window Traffic Lights**: High-resolution borderless circular traffic light buttons (Close, Minimize, Maximize) placed on the top left.
-5. **Glassy Terminal Transparency**: Automatically configures 75% background opacity for modern **Ptyxis** and traditional **GNOME Terminal**.
-6. **Sleek Shell Configuration**: Portable `.bashrc` with cross-shell [Starship](https://starship.rs/) prompt integration.
-7. **Automated GNOME Extensions**: Installs and activates Dash to Dock, Blur my Shell, Logo Menu, and User Themes automatically.
-
----
-
-## Visual & Opacity Matrix
-
-| Application / Surface | Rendered Opacity | Background Style | Text & Controls |
-| :--- | :---: | :--- | :---: |
-| **Nautilus (Files) Grid & Lists** | **75%** (`rgba(28, 28, 30, 0.75)`) | Frosted glass with desktop blur | 100% Opaque |
-| **Nautilus Sidebar** | **70%** (`rgba(22, 22, 24, 0.70)`) | Deep glass contrast | 100% Opaque |
-| **GNOME Calculator** | **75%** (`rgba(28, 28, 30, 0.75)`) | Translucent canvas + frosted display card | 100% Opaque |
-| **GNOME Software** | **75%** (`rgba(28, 28, 30, 0.75)`) | Glass backdrop with full Mutter blur | 100% Opaque |
-| **Ptyxis / GNOME Terminal** | **75%** (`opacity=0.75`) | Frosted glassy terminal window | 100% Opaque |
-| **Window Traffic Lights** | — | Clean macOS circular dots (zero border) | 100% Opaque |
-| **Standard UI Buttons** | — | Borderless frosted pills (no sharp borders) | 100% Opaque |
-
----
-
-## Recommended GNOME Extensions
-
-WhiteSur-Glassy includes an automated extension installer (`./install.sh --extensions`) that queries [extensions.gnome.org](https://extensions.gnome.org), downloads the version matching your GNOME Shell release, compiles extension schemas, and automatically activates them by default in GSettings & dconf (no manual GUI toggling required):
-
-| Extension | UUID | Purpose |
-| :--- | :--- | :--- |
-| **[User Themes](https://extensions.gnome.org/extension/19/user-themes/)** | `user-theme@gnome-shell-extensions.gcampax.github.com` | Enables loading custom shell themes from `~/.themes`. |
-| **[Blur my Shell](https://extensions.gnome.org/extension/3193/blur-my-shell/)** | `blur-my-shell@aunetx` | Blurs wallpapers behind windows, panel, and dock. |
-| **[Dash to Dock](https://extensions.gnome.org/extension/307/dash-to-dock/)** | `dash-to-dock@micxgx.gmail.com` | Turns the dash into a customizable macOS-style glass dock. |
-| **[Logo Menu](https://extensions.gnome.org/extension/4451/logo-menu/)** | `logomenu@aryan_k` | Adds an Apple or distro logo to the panel corner. |
-
----
+- **Transparent app backgrounds**: 75% background transparency on GTK3, GTK4, and Libadwaita apps (Files, Settings, Calculator, Software).
+- **Readable text & controls**: Text, icons, and inputs stay 100% opaque.
+- **No button borders**: Removes harsh button outlines so buttons look natural on glass backgrounds.
+- **macOS window controls**: Left-aligned traffic light buttons (close, minimize, maximize) across GTK and Libadwaita.
+- **Glassy Quick Settings**: Audio device picker and submenus match the rest of the blurred panel.
+- **Terminal transparency**: Automatically sets 75% background opacity in Ptyxis and GNOME Terminal.
+- **Shell config**: Clean `.bashrc` template that installs and configures the Starship prompt.
+- **Extension installer**: One-command setup for Blur my Shell, Dash to Dock, Logo Menu, and User Themes.
 
 ## Quick Start
 
-Clone and run the automated installer:
+Clone the repo and run the installer:
 
 ```bash
 git clone https://github.com/0xM4lik/WhiteSur-Glassy.git
@@ -72,105 +25,60 @@ cd WhiteSur-Glassy
 ./install.sh
 ```
 
----
+Running `./install.sh` without flags gives you an interactive prompt where you can choose what to set up.
 
-## Installation Options
+## Installation Flags
 
-You can install all components interactively, or pass specific flags:
+You can also pass flags directly:
 
 ```bash
-# Install everything (Theme, Traffic Lights, Icons, Extensions, Terminal, Shell, Presets)
+# Install everything (theme, icons, extensions, terminal, shell, presets)
 ./install.sh --all
 
-# Install GTK & Libadwaita glassy theme + Apple window traffic lights
+# Only install the GTK/Libadwaita theme and window buttons
 ./install.sh --theme
 
-# Install WhiteSur Apple-style icon theme (authentic macOS icons)
+# Only install WhiteSur icons
 ./install.sh --icons
 
-# Install recommended GNOME extensions (Dash to Dock, Blur my Shell, Logo Menu, User Themes)
+# Only install GNOME extensions
 ./install.sh --extensions
 
-# Configure 75% terminal transparency (Ptyxis & GNOME Terminal)
+# Set terminal transparency to 75% (Ptyxis / GNOME Terminal)
 ./install.sh --terminal
 
-# Install clean glassy shell configuration (.bashrc with Starship prompt)
+# Install shell config (.bashrc + Starship prompt)
 ./install.sh --shell
 
-# Apply recommended extension presets (Dash to Dock, Blur my Shell, Logo Menu) & Terminal
+# Apply extension presets (Blur my Shell, Dash to Dock, Logo Menu)
 ./install.sh --configs
 
-# Check dependencies and system status without installing
+# Check system dependencies
 ./install.sh --check
 ```
 
----
+## Recommended Extensions
 
-## Configuration Breakdown
+The installer can automatically download, compile, and enable these extensions:
 
-### 1. Libadwaita Overrides & Apple Window Controls (`theme/libadwaita/`)
-Libadwaita apps (Nautilus, Calculator, Software, Settings) read their styling from `~/.config/gtk-4.0/gtk.css`:
+- **[User Themes](https://extensions.gnome.org/extension/19/user-themes/)**: Needed to load the shell theme from `~/.themes`.
+- **[Blur my Shell](https://extensions.gnome.org/extension/3193/blur-my-shell/)**: Blurs the desktop wallpaper behind windows and the panel.
+- **[Dash to Dock](https://extensions.gnome.org/extension/307/dash-to-dock/)**: Dock at the bottom of the screen.
+- **[Logo Menu](https://extensions.gnome.org/extension/4451/logo-menu/)**: Apple logo menu in the top-left corner.
 
-```css
-/* Color Palette */
-@define-color window_bg_color rgba(28, 28, 30, 0.75);
-@define-color sidebar_bg_color rgba(22, 22, 24, 0.70);
-@define-color headerbar_bg_color rgba(32, 32, 34, 0.75);
+## Uninstall
 
-/* High-Contrast Opaque Elements */
-@define-color window_fg_color #dedede;
-@define-color headerbar_fg_color #ffffff;
-@define-color card_bg_color rgba(255, 255, 255, 0.08);
-```
-
-- **Apple Window Traffic Lights**: Window controls are aligned to the top-left (`close,minimize,maximize:`) with borderless, circular macOS traffic lights (Red/Yellow/Green dots with hover symbols).
-- **Borderless Buttons**: Buttons render as clean, borderless frosted pills without harsh outlines.
-
-### 2. WhiteSur Icon Theme (`scripts/install-icons.sh`)
-- Automated installer for [vinceliuice/WhiteSur-icon-theme](https://github.com/vinceliuice/WhiteSur-icon-theme).
-- Installs authentic Apple macOS Big Sur/Monterey/Sonoma icons (Finder smiling face, App Store, and high-DPI application icons).
-
-### 3. Glassy Terminal Transparency (`scripts/setup-terminal.sh`)
-- Automatically detects **Ptyxis** (Fedora default) and configures profile opacity to `0.75`.
-- Automatically detects **GNOME Terminal** (Ubuntu/Debian/Arch) and sets background transparency to 25% (75% opacity).
-
-### 4. Shell Configuration (`configs/shell/bashrc`)
-- Clean, modular `.bashrc` template.
-- Seamless integration with [Starship](https://starship.rs/) prompt.
-- Sourcing for modular `~/.bashrc.d/` snippets.
-- Silences noisy virtualenv prompt prefixes.
-
-### 5. Extension Configurations (`configs/`)
-
-- **Blur my Shell (`configs/blur-my-shell-glassy.dconf`)**:
-  - Whitelist containing Nautilus, Calculator, Software, Ptyxis, Settings, and Text Editor.
-  - Dual pipelines: rounded blur for dock and popups (`corner-radius: 24`, `sigma: 10`), standard gaussian blur for windows (`sigma: 10`, `brightness: 1.0`).
-- **Dash to Dock (`configs/dash-to-dock-glassy.dconf`)**:
-  - Centered macOS-style floating dock at bottom of the primary monitor.
-  - 80% background opacity (`0.80`), 48px icons, intelligent auto-hide, and minimized animations.
-- **Logo Menu (`configs/logo-menu-glassy.dconf`)**:
-  - Apple symbolic logo on the top-left panel corner.
-  - Quick launcher configured for system monitoring (`Resources`).
-
----
-
-## Uninstallation / Rollback
-
-To cleanly remove all modifications and revert to default themes:
+To remove the theme and restore default settings:
 
 ```bash
 ./uninstall.sh
 ```
 
----
+This reverts your GTK and icon themes back to Adwaita, restores your window button layout, resets terminal opacity back to opaque (1.0), restores your original `~/.bashrc` from backup, and gives you the option to remove installed icons and extensions.
 
 ## Credits & License
 
-- **Original WhiteSur Theme**: Created by [vinceliuice](https://github.com/vinceliuice/WhiteSur-gtk-theme).
-- **WhiteSur Icon Theme**: Created by [vinceliuice](https://github.com/vinceliuice/WhiteSur-icon-theme).
-- **Blur my Shell Extension**: Created by [aunetx](https://github.com/aunetx/blur-my-shell).
-- **Dash to Dock Extension**: Created by [michele_g](https://github.com/micheleg/dash-to-dock).
-- **Logo Menu Extension**: Created by [Aryan_K](https://github.com/Aryan20/Logomenu).
-- **User Themes Extension**: Maintained by [GNOME](https://gitlab.gnome.org/GNOME/gnome-shell-extensions).
+- Based on [WhiteSur-gtk-theme](https://github.com/vinceliuice/WhiteSur-gtk-theme) and [WhiteSur-icon-theme](https://github.com/vinceliuice/WhiteSur-icon-theme) by vinceliuice.
+- Uses [Blur my Shell](https://github.com/aunetx/blur-my-shell) by aunetx.
 
-Distributed under the **GNU General Public License v3.0 (GPL-3.0)**. See [LICENSE](LICENSE) for full details.
+Licensed under [GPL-3.0](LICENSE).

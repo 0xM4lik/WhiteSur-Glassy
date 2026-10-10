@@ -1,11 +1,9 @@
 #!/bin/bash
 set -e
 
-echo "=== GNOME Extensions Installer ==="
-
 if ! command -v gnome-extensions >/dev/null 2>&1; then
-    echo "Error: gnome-extensions CLI tool not found. Are you running GNOME?"
-    echo "Install it via: sudo dnf install gnome-shell (Fedora) or sudo apt install gnome-shell (Ubuntu)"
+    echo "gnome-extensions CLI tool not found."
+    echo "Install it with your package manager (e.g. sudo dnf install gnome-shell or sudo apt install gnome-shell)"
     exit 1
 fi
 
@@ -113,31 +111,26 @@ def set_gsettings_list(key, items):
     run_cmd(["gsettings", "set", "org.gnome.shell", key, formatted])
     run_cmd(["dconf", "write", f"/org/gnome/shell/{key}", formatted])
 
-# 1. Enable global master switch for user extensions
-print("-> Enabling GNOME user extensions global master switch...")
+# Make sure user extensions are enabled globally
 run_cmd(["gsettings", "set", "org.gnome.shell", "disable-user-extensions", "false"])
 run_cmd(["dconf", "write", "/org/gnome/shell/disable-user-extensions", "false"])
 
 shell_ver = get_shell_version()
-print(f"-> Detected GNOME Shell version: {shell_ver}")
 installed = get_installed_list()
-
 installed_or_present_uuids = []
 
 for ext in EXTENSIONS:
     name = ext["name"]
     uuid = ext["uuid"]
-    print(f"\nProcessing {name} ({uuid})...")
 
     if uuid in installed:
-        print(f"  [✓] {name} is installed.")
+        print(f"{name} is already installed.")
     else:
-        print(f"  -> Fetching package for GNOME Shell {shell_ver}...")
+        print(f"Downloading {name}...")
         try:
             dl_url = get_download_url(uuid, shell_ver)
             if not dl_url:
-                print(f"  [!] No compatible bundle found for GNOME Shell {shell_ver}.")
-                print(f"      Install manually at: {ext['url']}")
+                print(f"Could not find download for GNOME Shell {shell_ver}. You can install manually at: {ext['url']}")
                 continue
 
             with tempfile.NamedTemporaryFile(suffix=".zip", delete=False) as tmp_file:
@@ -147,44 +140,34 @@ for ext in EXTENSIONS:
             with urllib.request.urlopen(req, timeout=15) as resp, open(tmp_path, "wb") as out_f:
                 out_f.write(resp.read())
 
-            print(f"  -> Installing extension bundle...")
             run_cmd(["gnome-extensions", "install", "--force", tmp_path])
             if os.path.exists(tmp_path):
                 os.remove(tmp_path)
-            print(f"  [✓] {name} files installed.")
+            print(f"Installed {name}.")
         except Exception as e:
-            print(f"  [!] Failed to install {name} automatically: {e}")
-            print(f"      You can install it manually from: {ext['url']}")
+            print(f"Could not download {name}: {e}")
             continue
 
-    # Compile schemas if present
     schemas_dir = os.path.expanduser(f"~/.local/share/gnome-shell/extensions/{uuid}/schemas")
     if os.path.isdir(schemas_dir):
         run_cmd(["glib-compile-schemas", schemas_dir])
 
-    # Invoke CLI enable
     run_cmd(["gnome-extensions", "enable", uuid])
     installed_or_present_uuids.append(uuid)
 
-# 2. Add all targeted extensions to enabled-extensions in gsettings & dconf
+# Enable them in settings
 if installed_or_present_uuids:
-    print("\n-> Activating extensions directly in GNOME configuration...")
     current_enabled = get_gsettings_list("enabled-extensions")
     updated_enabled = list(dict.fromkeys(current_enabled + installed_or_present_uuids))
     set_gsettings_list("enabled-extensions", updated_enabled)
 
-    # Remove from disabled-extensions if present
     current_disabled = get_gsettings_list("disabled-extensions")
     updated_disabled = [u for u in current_disabled if u not in installed_or_present_uuids]
     if len(updated_disabled) != len(current_disabled):
         set_gsettings_list("disabled-extensions", updated_disabled)
 
-    # 3. If User Themes is installed, configure WhiteSur-glassy shell theme
     if "user-theme@gnome-shell-extensions.gcampax.github.com" in installed_or_present_uuids:
-        print("-> Setting GNOME Shell theme to WhiteSur-glassy in dconf...")
         run_cmd(["dconf", "write", "/org/gnome/shell/extensions/user-theme/name", "'WhiteSur-glassy'"])
 
-    print("[✓] All target extensions configured and enabled by default.")
-
-print("\nExtensions setup finished. All extensions are active and enabled.")
+print("Extensions configured and enabled.")
 PYEOF

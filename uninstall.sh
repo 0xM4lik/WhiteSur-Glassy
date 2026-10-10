@@ -4,32 +4,118 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LIBADWAITA_DIR="$SCRIPT_DIR/theme/libadwaita"
 DEST_THEMES_DIR="${XDG_DATA_HOME:-$HOME/.themes}"
+DEST_ICONS_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/icons"
+USER_EXT_DIR="$HOME/.local/share/gnome-shell/extensions"
 
-echo "=== WhiteSur-Glassy Uninstaller ==="
+echo "Uninstalling WhiteSur-Glassy..."
 
-# 1. Reset GTK theme & window buttons to default if WhiteSur-glassy is active
+# 1. Revert desktop themes and window controls
 if command -v gsettings >/dev/null 2>&1; then
+    echo "Reverting GTK and icon themes to default..."
     CURRENT_THEME=$(gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null || echo "")
     if [ "$CURRENT_THEME" = "'WhiteSur-glassy'" ]; then
-        echo "-> Reverting GTK theme to default..."
         gsettings set org.gnome.desktop.interface gtk-theme "Adwaita" 2>/dev/null || true
     fi
 
-    echo "-> Reverting window controls button layout..."
+    CURRENT_ICONS=$(gsettings get org.gnome.desktop.interface icon-theme 2>/dev/null || echo "")
+    if [ "$CURRENT_ICONS" = "'WhiteSur'" ]; then
+        gsettings set org.gnome.desktop.interface icon-theme "Adwaita" 2>/dev/null || true
+    fi
+
+    echo "Reverting window button layout..."
     gsettings set org.gnome.desktop.wm.preferences button-layout ":appmenu,close" 2>/dev/null || true
 fi
 
-# 2. Remove GTK Theme
+# 2. Reset GNOME Shell theme in dconf
+if command -v dconf >/dev/null 2>&1; then
+    echo "Resetting GNOME Shell theme..."
+    dconf write /org/gnome/shell/extensions/user-theme/name "''" 2>/dev/null || true
+fi
+
+# 3. Remove GTK theme files
 if [ -d "$DEST_THEMES_DIR/WhiteSur-glassy" ]; then
-    echo "-> Removing $DEST_THEMES_DIR/WhiteSur-glassy..."
+    echo "Removing $DEST_THEMES_DIR/WhiteSur-glassy..."
     rm -rf "$DEST_THEMES_DIR/WhiteSur-glassy"
 fi
 
-# 3. Revert Libadwaita overrides
+# 4. Remove Libadwaita overrides and restore backups
 if [ -f "$LIBADWAITA_DIR/setup-libadwaita.sh" ]; then
-    echo "-> Restoring Libadwaita overrides..."
+    echo "Restoring GTK 4 / Libadwaita config..."
     bash "$LIBADWAITA_DIR/setup-libadwaita.sh" uninstall
 fi
 
-echo ""
-echo "=== WhiteSur-Glassy uninstalled successfully. ==="
+# 5. Revert terminal transparency back to opaque (1.0)
+if command -v gsettings >/dev/null 2>&1 && command -v dconf >/dev/null 2>&1; then
+    # Ptyxis
+    if gsettings list-schemas 2>/dev/null | grep -q "org.gnome.Ptyxis"; then
+        echo "Resetting Ptyxis terminal opacity..."
+        DEF_UUID=$(gsettings get org.gnome.Ptyxis default-profile-uuid 2>/dev/null | tr -d "'")
+        [ -n "$DEF_UUID" ] && [ "$DEF_UUID" != "none" ] && dconf write "/org/gnome/Ptyxis/Profiles/${DEF_UUID}/opacity" 1.0 2>/dev/null || true
+        ALL_UUIDS=$(gsettings get org.gnome.Ptyxis profile-uuids 2>/dev/null | tr -d "[]'" | tr ',' ' ')
+        for u in $ALL_UUIDS; do
+            [ -n "$u" ] && dconf write "/org/gnome/Ptyxis/Profiles/${u}/opacity" 1.0 2>/dev/null || true
+        done
+    fi
+
+    # GNOME Terminal
+    if gsettings list-schemas 2>/dev/null | grep -q "org.gnome.Terminal.ProfilesList"; then
+        echo "Resetting GNOME Terminal opacity..."
+        DEF_PROF=$(gsettings get org.gnome.Terminal.ProfilesList default 2>/dev/null | tr -d "'")
+        if [ -n "$DEF_PROF" ]; then
+            dconf write "/org/gnome/terminal/legacy/profiles:/:${DEF_PROF}/use-transparent-background" false 2>/dev/null || true
+            dconf write "/org/gnome/terminal/legacy/profiles:/:${DEF_PROF}/background-transparency-percent" 0 2>/dev/null || true
+        fi
+    fi
+fi
+
+# 6. Restore original ~/.bashrc if a backup exists
+LATEST_BASHRC_BAK=$(ls -t "$HOME"/.bashrc.pre-whitesur-*.bak 2>/dev/null | head -n 1 || true)
+if [ -n "$LATEST_BASHRC_BAK" ] && [ -f "$LATEST_BASHRC_BAK" ]; then
+    echo "Restoring ~/.bashrc from backup ($LATEST_BASHRC_BAK)..."
+    cp -f "$LATEST_BASHRC_BAK" "$HOME/.bashrc"
+fi
+
+# 7. Reset extension configs in dconf
+if command -v dconf >/dev/null 2>&1; then
+    echo "Resetting extension configs in dconf..."
+    dconf reset -f /org/gnome/shell/extensions/blur-my-shell/ 2>/dev/null || true
+    dconf reset -f /org/gnome/shell/extensions/dash-to-dock/ 2>/dev/null || true
+    dconf reset -f /org/gnome/shell/extensions/Logo-menu/ 2>/dev/null || true
+fi
+
+# 8. Clean up installed WhiteSur icons if present
+if [ -d "$DEST_ICONS_DIR/WhiteSur" ]; then
+    read -p "Remove installed WhiteSur icons from ~/.local/share/icons? [y/N]: " ans_icons
+    case "$ans_icons" in
+        [yY]*)
+            echo "Removing WhiteSur icons..."
+            rm -rf "$DEST_ICONS_DIR"/WhiteSur*
+            ;;
+    esac
+fi
+
+# 9. Clean up extensions installed into ~/.local/share/gnome-shell/extensions
+EXT_LIST=("blur-my-shell@aunetx" "dash-to-dock@micxgx.gmail.com" "logomenu@aryan_k" "user-theme@gnome-shell-extensions.gcampax.github.com")
+FOUND_EXTS=false
+for ext in "${EXT_LIST[@]}"; do
+    if [ -d "$USER_EXT_DIR/$ext" ]; then
+        FOUND_EXTS=true
+        break
+    fi
+done
+
+if [ "$FOUND_EXTS" = true ]; then
+    read -p "Remove installed GNOME extensions (Blur my Shell, Dash to Dock, Logo Menu, User Themes)? [y/N]: " ans_exts
+    case "$ans_exts" in
+        [yY]*)
+            echo "Removing extensions from ~/.local/share/gnome-shell/extensions..."
+            for ext in "${EXT_LIST[@]}"; do
+                if [ -d "$USER_EXT_DIR/$ext" ]; then
+                    rm -rf "$USER_EXT_DIR/$ext"
+                fi
+            done
+            ;;
+    esac
+fi
+
+echo "Done. WhiteSur-Glassy has been uninstalled."
