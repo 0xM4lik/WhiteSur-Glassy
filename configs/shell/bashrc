@@ -1,0 +1,43 @@
+# ==============================================================================
+# WhiteSur-Glassy Shell Configuration (.bashrc)
+# ==============================================================================
+
+# Sourcing system global definitions
+if [ -f /etc/bashrc ]; then
+    . /etc/bashrc
+fi
+
+# Ensure user binary paths are available in PATH
+if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
+    export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+fi
+
+# User-specific modular aliases and functions
+if [ -d "$HOME/.bashrc.d" ]; then
+    for rc in "$HOME/.bashrc.d/"*; do
+        if [ -f "$rc" ]; then
+            . "$rc"
+        fi
+    done
+    unset rc
+fi
+
+# Clean environment prompts (silence virtualenv prefixes)
+unset VIRTUAL_ENV
+unset VIRTUAL_ENV_PROMPT
+
+# Starship cross-shell prompt (https://starship.rs/)
+if command -v starship >/dev/null 2>&1; then
+    eval "$(starship init bash)"
+fi
+
+# Handy terminal aliases
+alias ll='ls -lah --color=auto'
+alias la='ls -A --color=auto'
+alias l='ls -CF --color=auto'
+alias grep='grep --color=auto'
+
+# Fastfetch system info on interactive shells (if installed)
+if [[ $- == *i* ]] && command -v fastfetch >/dev/null 2>&1; then
+    fastfetch
+fi

@@ -4,12 +4,11 @@
 
 **A curated frosted-glass desktop theme suite for GNOME & Blur my Shell.**
 
-Translucent GTK 3, GTK 4, Libadwaita, and Flatpak application styling with sharp, 100% readable text and controls.
+Translucent GTK 3, GTK 4, and Libadwaita application styling with sharp, 100% readable text, authentic Apple window traffic lights, and glassy terminal transparency.
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![GNOME](https://img.shields.io/badge/GNOME-45%20|%2046%20|%2047%20|%2050+-3584e4.svg?logo=gnome)](https://www.gnome.org/)
 [![Libadwaita](https://img.shields.io/badge/Libadwaita-Supported-brightgreen.svg)](https://gitlab.gnome.org/GNOME/libadwaita)
-[![Flatpak](https://img.shields.io/badge/Flatpak-Transparent%20YTM-blueviolet.svg?logo=flatpak)](https://flatpak.org/)
 
 </div>
 
@@ -21,15 +20,18 @@ Translucent GTK 3, GTK 4, Libadwaita, and Flatpak application styling with sharp
 When using the [Blur my Shell](https://github.com/aunetx/blur-my-shell) extension on GNOME, window transparency is often frustrating:
 - **Global window opacity hacks** make everything transparent — including text, buttons, and icons — making applications difficult to read.
 - **Stock GTK and Libadwaita applications** (like Files/Nautilus, Calculator, and Software) hardcode multiple solid background layers, rendering as flat opaque grey boxes even when whitelisted.
-- **Electron applications** (such as the YouTube Music Flatpak) initialize with opaque RGB visuals and solid black DOM containers, completely obscuring the blurred wallpaper behind them.
+- **Default terminals** require manual diving into preferences to configure opacity.
+- **Stock button outlines** create distracting borders on translucent frosted glass backgrounds.
 
 ### The Solution: WhiteSur-Glassy
 **WhiteSur-Glassy** transforms your desktop into an authentic frosted-glass interface:
 1. **~75% Translucent Background Surfaces**: Window backdrops, sidebars, and navigation bars allow desktop wallpaper blur to shine through.
-2. **100% Opaque & Crisp Foregrounds**: Text, icons, album covers, buttons, and inputs remain sharp, high-contrast, and fully readable.
+2. **100% Opaque & Crisp Foregrounds**: Text, icons, buttons, and inputs remain sharp, high-contrast, and fully readable with zero borders.
 3. **No Double-Layering**: Deep container hierarchies in Nautilus and Libadwaita are stripped of opaque background overrides.
-4. **Third-Party App Parity**: Provides visual hooks and native transparency patches for Electron Flatpaks like **YouTube Music**.
-5. **Automated GNOME Extensions**: Installs and activates Dash to Dock, Blur my Shell, Logo Menu, and User Themes automatically.
+4. **Apple Window Traffic Lights**: High-resolution borderless circular traffic light buttons (Close, Minimize, Maximize) placed on the top left.
+5. **Glassy Terminal Transparency**: Automatically configures 75% background opacity for modern **Ptyxis** and traditional **GNOME Terminal**.
+6. **Sleek Shell Configuration**: Portable `.bashrc` with cross-shell [Starship](https://starship.rs/) prompt integration.
+7. **Automated GNOME Extensions**: Installs and activates Dash to Dock, Blur my Shell, Logo Menu, and User Themes automatically.
 
 ---
 
@@ -40,9 +42,10 @@ When using the [Blur my Shell](https://github.com/aunetx/blur-my-shell) extensio
 | **Nautilus (Files) Grid & Lists** | **75%** (`rgba(28, 28, 30, 0.75)`) | Frosted glass with desktop blur | 100% Opaque |
 | **Nautilus Sidebar** | **70%** (`rgba(22, 22, 24, 0.70)`) | Deep glass contrast | 100% Opaque |
 | **GNOME Calculator** | **75%** (`rgba(28, 28, 30, 0.75)`) | Translucent canvas + frosted display card | 100% Opaque |
-| **GNOME Software** | **75%** (`rgba(28, 28, 30, 0.75)`) | Glass backdrop behind category tiles | 100% Opaque |
-| **YouTube Music (Flatpak)** | **75%** (`rgba(20, 20, 22, 0.75)`) | Alpha visual with 20px frosted backdrop | 100% Opaque |
+| **GNOME Software** | **75%** (`rgba(28, 28, 30, 0.75)`) | Glass backdrop with full Mutter blur | 100% Opaque |
+| **Ptyxis / GNOME Terminal** | **75%** (`opacity=0.75`) | Frosted glassy terminal window | 100% Opaque |
 | **Window Traffic Lights** | — | Clean macOS circular dots (zero border) | 100% Opaque |
+| **Standard UI Buttons** | — | Borderless frosted pills (no sharp borders) | 100% Opaque |
 
 ---
 
@@ -76,22 +79,25 @@ cd WhiteSur-Glassy
 You can install all components interactively, or pass specific flags:
 
 ```bash
-# Install everything (Themes, Apple Traffic Lights, Icons, Extensions, YouTube Music patch, Extension Presets)
+# Install everything (Theme, Traffic Lights, Icons, Extensions, Terminal, Shell, Presets)
 ./install.sh --all
 
 # Install GTK & Libadwaita glassy theme + Apple window traffic lights
 ./install.sh --theme
 
-# Install WhiteSur Apple-style icon theme
+# Install WhiteSur Apple-style icon theme (authentic macOS icons)
 ./install.sh --icons
 
 # Install recommended GNOME extensions (Dash to Dock, Blur my Shell, Logo Menu, User Themes)
 ./install.sh --extensions
 
-# Patch YouTube Music Flatpak for transparency
-./install.sh --youtube-music
+# Configure 75% terminal transparency (Ptyxis & GNOME Terminal)
+./install.sh --terminal
 
-# Apply recommended extension presets (Dash to Dock, Blur my Shell, Logo Menu)
+# Install clean glassy shell configuration (.bashrc with Starship prompt)
+./install.sh --shell
+
+# Apply recommended extension presets (Dash to Dock, Blur my Shell, Logo Menu) & Terminal
 ./install.sh --configs
 
 # Check dependencies and system status without installing
@@ -118,56 +124,26 @@ Libadwaita apps (Nautilus, Calculator, Software, Settings) read their styling fr
 ```
 
 - **Apple Window Traffic Lights**: Window controls are aligned to the top-left (`close,minimize,maximize:`) with borderless, circular macOS traffic lights (Red/Yellow/Green dots with hover symbols).
-- To adjust overall window transparency, edit the alpha value (`0.75`) in `window_bg_color` and `sidebar_bg_color`.
+- **Borderless Buttons**: Buttons render as clean, borderless frosted pills without harsh outlines.
 
 ### 2. WhiteSur Icon Theme (`scripts/install-icons.sh`)
 - Automated installer for [vinceliuice/WhiteSur-icon-theme](https://github.com/vinceliuice/WhiteSur-icon-theme).
-- Provides Apple macOS Big Sur/Monterey high-resolution vector application, folder, and system status icons.
+- Installs authentic Apple macOS Big Sur/Monterey/Sonoma icons (Finder smiling face, App Store, and high-DPI application icons).
 
-### 3. YouTube Music Flatpak Setup & Patch (`apps/youtube-music/`)
+### 3. Glassy Terminal Transparency (`scripts/setup-terminal.sh`)
+- Automatically detects **Ptyxis** (Fedora default) and configures profile opacity to `0.75`.
+- Automatically detects **GNOME Terminal** (Ubuntu/Debian/Arch) and sets background transparency to 25% (75% opacity).
 
-> [!NOTE]
-> The YouTube Music desktop app (`th-ch/youtube-music` / `pear-desktop`) is **not available on Flathub**. It is distributed as a standalone `.flatpak` bundle via GitHub Releases.
+### 4. Shell Configuration (`configs/shell/bashrc`)
+- Clean, modular `.bashrc` template.
+- Seamless integration with [Starship](https://starship.rs/) prompt.
+- Sourcing for modular `~/.bashrc.d/` snippets.
+- Silences noisy virtualenv prompt prefixes.
 
-#### Installing YouTube Music Flatpak
-
-You can install it either automatically via our script or manually from GitHub:
-
-- **Automated (Recommended)**:
-  ```bash
-  # Automatically downloads the latest GitHub release bundle and installs it
-  bash scripts/install-youtube-music.sh
-  ```
-  *(Or run `./install.sh` and accept the prompt to download and install it).*
-
-- **Manual**:
-  1. Download the latest `YouTube-Music-*-x86_64.flatpak` bundle from the [Pear Desktop / YouTube Music Releases](https://github.com/pear-devs/pear-desktop/releases).
-  2. Install the downloaded bundle:
-     ```bash
-     flatpak install YouTube-Music-*-x86_64.flatpak
-     ```
-
-#### Applying the Glassy Transparency Patch
-
-Once installed, apply the transparency patch:
-```bash
-./install.sh --youtube-music
-```
-
-What the patcher does:
-- Unpacks the Flatpak's `app.asar` archive.
-- Reconfigures `new BrowserWindow({ transparent: true, backgroundColor: "#00000000" })`.
-- Adds `--enable-transparent-visuals` to Chromium launch arguments.
-- Unlocks the built-in `transparent-player` plugin for Linux (`Platform.Linux`).
-- Uses Flatpak's native `--app-path` parameter with a Btrfs CoW clone, consuming **0 bytes** duplicate disk storage.
-
-You can fine-tune your desired background opacity directly inside the app:
-> **YouTube Music** → **Plugins** → **Transparent Player** → **Opacity (10% - 100%)**
-
-### 4. Extension Configurations (`configs/`)
+### 5. Extension Configurations (`configs/`)
 
 - **Blur my Shell (`configs/blur-my-shell-glassy.dconf`)**:
-  - Whitelist containing Nautilus, Calculator, Software, Ptyxis, Settings, and YouTube Music.
+  - Whitelist containing Nautilus, Calculator, Software, Ptyxis, Settings, and Text Editor.
   - Dual pipelines: rounded blur for dock and popups (`corner-radius: 24`, `sigma: 10`), standard gaussian blur for windows (`sigma: 10`, `brightness: 1.0`).
 - **Dash to Dock (`configs/dash-to-dock-glassy.dconf`)**:
   - Centered macOS-style floating dock at bottom of the primary monitor.
@@ -175,28 +151,6 @@ You can fine-tune your desired background opacity directly inside the app:
 - **Logo Menu (`configs/logo-menu-glassy.dconf`)**:
   - Apple symbolic logo on the top-left panel corner.
   - Quick launcher configured for system monitoring (`Resources`).
-
----
-
-## Testing in Container (Fedora)
-
-To test the installation and validation in an isolated Fedora container without touching your local machine:
-
-```bash
-# Build test image
-podman build -t whitesur-glassy-test -f test/Containerfile .
-
-# Run test suite
-podman run --rm whitesur-glassy-test
-```
-
-The test suite validates:
-- [x] Balanced CSS syntax across all GTK 3, GTK 4, and GNOME Shell stylesheets.
-- [x] Script syntax across installer, uninstaller, and extension installer.
-- [x] Automated installer directory creation and symlink accuracy.
-- [x] Desktop entry validity via `desktop-file-validate`.
-- [x] Python asar packing and integrity calculation.
-- [x] Complete, clean uninstaller rollback.
 
 ---
 
@@ -208,20 +162,15 @@ To cleanly remove all modifications and revert to default themes:
 ./uninstall.sh
 ```
 
-To roll back only YouTube Music:
-```bash
-./apps/youtube-music/restore-youtube-music.sh
-```
-
 ---
 
 ## Credits & License
 
 - **Original WhiteSur Theme**: Created by [vinceliuice](https://github.com/vinceliuice/WhiteSur-gtk-theme).
+- **WhiteSur Icon Theme**: Created by [vinceliuice](https://github.com/vinceliuice/WhiteSur-icon-theme).
 - **Blur my Shell Extension**: Created by [aunetx](https://github.com/aunetx/blur-my-shell).
 - **Dash to Dock Extension**: Created by [michele_g](https://github.com/micheleg/dash-to-dock).
 - **Logo Menu Extension**: Created by [Aryan_K](https://github.com/Aryan20/Logomenu).
 - **User Themes Extension**: Maintained by [GNOME](https://gitlab.gnome.org/GNOME/gnome-shell-extensions).
-- **YouTube Music Desktop App**: Maintained by [th-ch](https://github.com/th-ch/youtube-music).
 
 Distributed under the **GNU General Public License v3.0 (GPL-3.0)**. See [LICENSE](LICENSE) for full details.

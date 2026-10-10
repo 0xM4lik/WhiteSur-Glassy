@@ -11,7 +11,8 @@ INSTALL_THEME=false
 INSTALL_LIBADWAITA=false
 INSTALL_ICONS=false
 INSTALL_EXTENSIONS=false
-INSTALL_YTM=false
+INSTALL_TERMINAL=false
+INSTALL_SHELL=false
 INSTALL_CONFIGS=false
 
 # ==============================================================================
@@ -23,26 +24,22 @@ check_tool() {
 
 HAS_PYTHON=false
 HAS_GNOME_EXT=false
-HAS_FLATPAK=false
-HAS_YTM=false
 HAS_DCONF=false
 HAS_ICONS=false
+HAS_PTYXIS=false
+HAS_GNOME_TERM=false
 
 check_tool python3 && HAS_PYTHON=true
 check_tool gnome-extensions && HAS_GNOME_EXT=true
-check_tool flatpak && HAS_FLATPAK=true
 check_tool dconf && HAS_DCONF=true
 
 if [ -d "$HOME/.local/share/icons/WhiteSur" ] || [ -d "/usr/share/icons/WhiteSur" ]; then
     HAS_ICONS=true
 fi
 
-if [ "$HAS_FLATPAK" = true ]; then
-    if flatpak list 2>/dev/null | grep -q "com.github.th_ch.youtube_music" || \
-       [ -d "/var/lib/flatpak/app/com.github.th_ch.youtube_music" ] || \
-       [ -d "$HOME/.local/share/flatpak/app/com.github.th_ch.youtube_music" ]; then
-        HAS_YTM=true
-    fi
+if check_tool gsettings; then
+    gsettings list-schemas | grep -q "org.gnome.Ptyxis" && HAS_PTYXIS=true
+    gsettings list-schemas | grep -q "org.gnome.Terminal.ProfilesList" && HAS_GNOME_TERM=true
 fi
 
 show_help() {
@@ -50,12 +47,13 @@ show_help() {
 Usage: ./install.sh [OPTIONS]
 
 Options:
-  --all            Install all components (Themes, Window Controls, Icons, Extensions, YouTube Music, Extension Configs)
+  --all            Install all components (Theme, Window Controls, Icons, Extensions, Terminal, Shell, Configs)
   --theme          Install GTK 2/3/4 theme, Libadwaita glassy overrides, and Apple window traffic lights
-  --icons          Install WhiteSur Apple-style icon theme
+  --icons          Install WhiteSur Apple-style icon theme (authentic macOS icons)
   --extensions     Install recommended GNOME extensions (Dash to Dock, Blur my Shell, Logo Menu, User Themes)
-  --youtube-music  Patch YouTube Music Flatpak for glassy transparency
-  --configs        Apply recommended extension configurations (Dash to Dock, Blur my Shell, Logo Menu)
+  --terminal       Configure 75% terminal transparency for Ptyxis and GNOME Terminal
+  --shell          Install clean glassy shell configuration (.bashrc with Starship prompt)
+  --configs        Apply recommended extension configurations (Dash to Dock, Blur my Shell, Logo Menu) & Terminal
   --blur-settings  Alias for --configs
   --check          Only check dependencies and environment status
   --help, -h       Show this help message
@@ -71,7 +69,7 @@ print_dependency_status() {
     if [ "$HAS_PYTHON" = true ]; then
         echo "  [✓] Python 3: $(python3 --version 2>&1)"
     else
-        echo "  [✗] Python 3: NOT FOUND (required for theme scripts & patchers)"
+        echo "  [!] Python 3: Not found"
     fi
 
     if [ "$HAS_GNOME_EXT" = true ]; then
@@ -91,18 +89,12 @@ print_dependency_status() {
         echo "      (Install via: ./install.sh --icons)"
     fi
 
-    if [ "$HAS_FLATPAK" = true ]; then
-        echo "  [✓] Flatpak: $(flatpak --version 2>&1)"
-        if [ "$HAS_YTM" = true ]; then
-            echo "  [✓] YouTube Music Flatpak: Installed"
-        else
-            echo "  [!] YouTube Music Flatpak: Not installed"
-            echo "      (Not on Flathub: download from https://github.com/pear-devs/pear-desktop/releases)"
-            echo "      (Or install via: flatpak install YouTube-Music-*-x86_64.flatpak)"
-        fi
+    if [ "$HAS_PTYXIS" = true ]; then
+        echo "  [✓] Ptyxis Terminal: Supported (Fedora default)"
+    elif [ "$HAS_GNOME_TERM" = true ]; then
+        echo "  [✓] GNOME Terminal: Supported"
     else
-        echo "  [✗] Flatpak: NOT FOUND"
-        echo "      (Required to run and patch the YouTube Music Flatpak)"
+        echo "  [!] Terminal: Standard terminal profiles not detected"
     fi
 
     if [ "$HAS_DCONF" = true ]; then
@@ -122,7 +114,8 @@ if [ $# -gt 0 ]; then
                 INSTALL_LIBADWAITA=true
                 INSTALL_ICONS=true
                 INSTALL_EXTENSIONS=true
-                INSTALL_YTM=true
+                INSTALL_TERMINAL=true
+                INSTALL_SHELL=true
                 INSTALL_CONFIGS=true
                 shift
                 ;;
@@ -139,12 +132,17 @@ if [ $# -gt 0 ]; then
                 INSTALL_EXTENSIONS=true
                 shift
                 ;;
-            --youtube-music)
-                INSTALL_YTM=true
+            --terminal)
+                INSTALL_TERMINAL=true
+                shift
+                ;;
+            --shell)
+                INSTALL_SHELL=true
                 shift
                 ;;
             --configs|--extension-configs|--blur-settings)
                 INSTALL_CONFIGS=true
+                INSTALL_TERMINAL=true
                 shift
                 ;;
             --check)
@@ -180,30 +178,11 @@ else
         echo "[!] Skipping GNOME extensions prompt: gnome-extensions CLI is not installed."
     fi
 
-    if [ "$HAS_FLATPAK" = true ]; then
-        if [ "$HAS_YTM" = true ]; then
-            read -p "Patch YouTube Music Flatpak for transparency? [y/N]: " ans_ytm
-            case "$ans_ytm" in [yY]*) INSTALL_YTM=true ;; esac
-        else
-            echo "Note: YouTube Music is not on Flathub (distributed via GitHub Releases)."
-            read -p "Would you like to download and install YouTube Music Flatpak from GitHub now? [y/N]: " ans_install_ytm
-            case "$ans_install_ytm" in
-                [yY]*)
-                    if [ -f "$SCRIPT_DIR/scripts/install-youtube-music.sh" ]; then
-                        if bash "$SCRIPT_DIR/scripts/install-youtube-music.sh"; then
-                            HAS_YTM=true
-                            INSTALL_YTM=true
-                        fi
-                    fi
-                    ;;
-                *)
-                    echo "[!] Skipping YouTube Music patch."
-                    ;;
-            esac
-        fi
-    else
-        echo "[!] Skipping YouTube Music patch: Flatpak is not installed."
-    fi
+    read -p "Configure 75% terminal transparency (Ptyxis & GNOME Terminal)? [Y/n]: " ans_term
+    case "${ans_term:-y}" in [yY]*) INSTALL_TERMINAL=true ;; esac
+
+    read -p "Install sleek glassy shell configuration (.bashrc with Starship prompt)? [y/N]: " ans_shell
+    case "$ans_shell" in [yY]*) INSTALL_SHELL=true ;; esac
 
     if [ "$HAS_DCONF" = true ]; then
         read -p "Apply recommended extension configurations (Dash to Dock, Blur my Shell, Logo Menu)? [y/N]: " ans_configs
@@ -260,27 +239,23 @@ if [ "$INSTALL_EXTENSIONS" = true ]; then
     fi
 fi
 
-# 5. Patch YouTube Music Flatpak
-if [ "$INSTALL_YTM" = true ]; then
-    if [ "$HAS_FLATPAK" = false ]; then
-        echo "[!] Cannot patch YouTube Music: 'flatpak' command not found."
-    elif [ "$HAS_YTM" = false ]; then
-        echo "[!] YouTube Music Flatpak (com.github.th_ch.youtube_music) is not installed."
-        echo "    Note: YouTube Music is not available on Flathub."
-        echo "    Download the .flatpak bundle from: https://github.com/pear-devs/pear-desktop/releases"
-        echo "    Install with: flatpak install YouTube-Music-*-x86_64.flatpak"
-        if [ -f "$SCRIPT_DIR/scripts/install-youtube-music.sh" ]; then
-            echo "    Or run: bash scripts/install-youtube-music.sh"
-        fi
-        echo "    Then rerun: ./install.sh --youtube-music"
-    else
-        echo "-> Patching YouTube Music Flatpak..."
-        bash "$SCRIPT_DIR/apps/youtube-music/patch-youtube-music.sh"
-        echo "[✓] YouTube Music Flatpak patched successfully."
+# 5. Configure Terminal Transparency (Ptyxis & GNOME Terminal)
+if [ "$INSTALL_TERMINAL" = true ]; then
+    echo "-> Setting up terminal transparency..."
+    if [ -f "$SCRIPT_DIR/scripts/setup-terminal.sh" ]; then
+        bash "$SCRIPT_DIR/scripts/setup-terminal.sh"
     fi
 fi
 
-# 6. Extension Configurations (Dash to Dock, Blur my Shell, Logo Menu)
+# 6. Setup Shell Configuration (.bashrc)
+if [ "$INSTALL_SHELL" = true ]; then
+    echo "-> Setting up glassy shell configuration..."
+    if [ -f "$SCRIPT_DIR/scripts/setup-shell.sh" ]; then
+        bash "$SCRIPT_DIR/scripts/setup-shell.sh"
+    fi
+fi
+
+# 7. Extension Configurations (Dash to Dock, Blur my Shell, Logo Menu)
 if [ "$INSTALL_CONFIGS" = true ]; then
     echo "-> Applying extension configurations..."
     if [ "$HAS_DCONF" = true ]; then

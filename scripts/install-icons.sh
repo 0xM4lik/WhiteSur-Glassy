@@ -12,7 +12,7 @@ else
     echo "-> Installing WhiteSur icon theme..."
     if [ -d "$HOME/Tweaks/WhiteSur-icon-theme" ] && [ -f "$HOME/Tweaks/WhiteSur-icon-theme/install.sh" ]; then
         echo "  (Found local repository in $HOME/Tweaks/WhiteSur-icon-theme)"
-        bash "$HOME/Tweaks/WhiteSur-icon-theme/install.sh" -d "$DEST_DIR" -a
+        bash "$HOME/Tweaks/WhiteSur-icon-theme/install.sh" -d "$DEST_DIR" -t default
     elif command -v git >/dev/null 2>&1; then
         echo "  (Fetching WhiteSur-icon-theme from GitHub...)"
         TMP_ICON_DIR=$(mktemp -d)
@@ -21,7 +21,7 @@ else
         }
         trap cleanup EXIT
         git clone --depth=1 https://github.com/vinceliuice/WhiteSur-icon-theme.git "$TMP_ICON_DIR"
-        bash "$TMP_ICON_DIR/install.sh" -d "$DEST_DIR" -a
+        bash "$TMP_ICON_DIR/install.sh" -d "$DEST_DIR" -t default
     else
         echo "Error: 'git' is required to download WhiteSur-icon-theme."
         echo "Install git or manually clone: https://github.com/vinceliuice/WhiteSur-icon-theme"

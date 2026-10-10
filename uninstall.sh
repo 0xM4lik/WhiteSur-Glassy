@@ -31,13 +31,5 @@ if [ -f "$LIBADWAITA_DIR/setup-libadwaita.sh" ]; then
     bash "$LIBADWAITA_DIR/setup-libadwaita.sh" uninstall
 fi
 
-# 4. Restore YouTube Music Flatpak
-if [ -f "$SCRIPT_DIR/apps/youtube-music/restore-youtube-music.sh" ]; then
-    if [ -d "$HOME/.local/share/youtube-music-glassy" ]; then
-        echo "-> Restoring YouTube Music Flatpak..."
-        bash "$SCRIPT_DIR/apps/youtube-music/restore-youtube-music.sh"
-    fi
-fi
-
 echo ""
 echo "=== WhiteSur-Glassy uninstalled successfully. ==="
