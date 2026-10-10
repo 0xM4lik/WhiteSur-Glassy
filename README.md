@@ -90,6 +90,9 @@ You can install all components interactively, or pass specific flags:
 
 # Apply recommended Blur my Shell dconf presets
 ./install.sh --blur-settings
+
+# Check dependencies and system status without installing
+./install.sh --check
 ```
 
 ---

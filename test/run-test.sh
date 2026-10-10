@@ -39,7 +39,8 @@ for sh_file in \
 done
 
 # 3. Test Installer in non-interactive mode
-echo "-> [TEST 3/6] Running installer (--theme)..."
+echo "-> [TEST 3/6] Running installer (--check & --theme)..."
+./install.sh --check
 ./install.sh --theme
 
 # Verify files were placed in $HOME

@@ -7,13 +7,40 @@ FLATPAK_ID="com.github.th_ch.youtube_music"
 APP_SYSTEM_DIR="/var/lib/flatpak/app/$FLATPAK_ID/current/active/files"
 APP_USER_DIR="$HOME/.local/share/flatpak/app/$FLATPAK_ID/current/active/files"
 
+# 1. Dependency Checks
+if ! command -v flatpak >/dev/null 2>&1; then
+    echo "Error: Flatpak is not installed on this system."
+    echo "Please install flatpak first: https://flatpak.org/setup/"
+    exit 1
+fi
+
+if [ ! -d "$APP_SYSTEM_DIR" ] && [ ! -d "$APP_USER_DIR" ]; then
+    echo "Notice: YouTube Music Flatpak ($FLATPAK_ID) is not installed."
+    if [ -t 0 ]; then
+        read -p "Would you like to install $FLATPAK_ID from Flathub now? [y/N]: " ans_install
+        case "$ans_install" in
+            [yY]*)
+                echo "Installing $FLATPAK_ID from Flathub..."
+                flatpak install -y flathub "$FLATPAK_ID"
+                ;;
+            *)
+                echo "Skipping patch. Install it via: flatpak install flathub $FLATPAK_ID"
+                exit 1
+                ;;
+        esac
+    else
+        echo "Error: YouTube Music Flatpak ($FLATPAK_ID) is not installed."
+        echo "Install it via: flatpak install flathub $FLATPAK_ID"
+        exit 1
+    fi
+fi
+
 if [ -d "$APP_SYSTEM_DIR" ]; then
     SOURCE_FILES="$APP_SYSTEM_DIR"
 elif [ -d "$APP_USER_DIR" ]; then
     SOURCE_FILES="$APP_USER_DIR"
 else
-    echo "Error: YouTube Music Flatpak ($FLATPAK_ID) is not installed."
-    echo "Install it via: flatpak install flathub $FLATPAK_ID"
+    echo "Error: Could not locate installed files for $FLATPAK_ID."
     exit 1
 fi
 
@@ -23,13 +50,13 @@ mkdir -p "$DEST_DIR/backup"
 mkdir -p "$HOME/.local/share/applications"
 mkdir -p "$HOME/.local/bin"
 
-# 1. Gracefully stop running instances
+# 2. Gracefully stop running instances
 echo "Stopping any running instance of YouTube Music..."
 flatpak kill "$FLATPAK_ID" 2>/dev/null || true
 pkill -f "youtube-music" 2>/dev/null || true
 sleep 1
 
-# 2. Backup and update config.json
+# 3. Backup and update config.json
 CONFIG_PATH="$HOME/.var/app/$FLATPAK_ID/config/YouTube Music/config.json"
 if [ -f "$CONFIG_PATH" ]; then
     echo "Backing up user config.json..."
@@ -54,11 +81,11 @@ except Exception as e:
 "
 fi
 
-# 3. Reflink clone base Flatpak files (takes ~0 bytes extra disk space on Btrfs)
+# 4. Reflink clone base Flatpak files (takes ~0 bytes extra disk space on Btrfs)
 echo "Reflink-cloning Flatpak runtime files..."
 cp -a --reflink=auto "$SOURCE_FILES"/* "$DEST_DIR/files/"
 
-# 4. Patch app.asar using Python
+# 5. Patch app.asar using Python
 ORIG_ASAR="$SOURCE_FILES/lib/$FLATPAK_ID/resources/app.asar"
 TARGET_ASAR="$DEST_DIR/files/lib/$FLATPAK_ID/resources/app.asar"
 TEMP_WORK_DIR=$(mktemp -d -t ytm-patch-XXXXXX)
@@ -289,7 +316,7 @@ PYEOF
 
 rm -rf "$TEMP_WORK_DIR"
 
-# 5. Create desktop launcher in ~/.local/share/applications
+# 6. Create desktop launcher in ~/.local/share/applications
 echo "Creating application launcher..."
 cat << DESKTOP_EOF > "$HOME/.local/share/applications/com.github.th_ch.youtube_music.desktop"
 [Desktop Entry]
@@ -306,7 +333,7 @@ DESKTOP_EOF
 
 update-desktop-database "$HOME/.local/share/applications" 2>/dev/null || true
 
-# 6. Create CLI wrapper in ~/.local/bin
+# 7. Create CLI wrapper in ~/.local/bin
 cat << BIN_EOF > "$HOME/.local/bin/youtube-music"
 #!/bin/bash
 exec /usr/bin/flatpak run --branch=master --arch=x86_64 --app-path=$DEST_DIR/files --command=electron-wrapper --file-forwarding $FLATPAK_ID "\$@"
