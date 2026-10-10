@@ -1,0 +1,247 @@
+/* Translucent Background Color Palette (~75% frosted glass) */
+@define-color window_bg_color rgba(28, 28, 30, 0.75);
+@define-color view_bg_color transparent;
+@define-color sidebar_bg_color rgba(22, 22, 24, 0.70);
+@define-color headerbar_bg_color rgba(32, 32, 34, 0.75);
+@define-color secondary_sidebar_bg_color rgba(24, 24, 26, 0.72);
+@define-color dialog_bg_color rgba(32, 32, 34, 0.85);
+@define-color popover_bg_color rgba(32, 32, 34, 0.85);
+
+/* Fully Opaque Foregrounds & Controls */
+@define-color window_fg_color #dedede;
+@define-color view_fg_color #dedede;
+@define-color sidebar_fg_color #dedede;
+@define-color headerbar_fg_color #ffffff;
+@define-color card_bg_color rgba(255, 255, 255, 0.08);
+@define-color card_fg_color #dedede;
+
+@import url("gtk-WhiteSur-Dark.css");
+
+/* Base Window Surface with 1px Specular Edge */
+window,
+window.background,
+window.csd,
+window.nautilus-window,
+window.nautilus-window.background.csd,
+.nautilus-window.background.csd,
+#NautilusFileChooser.background.csd {
+    background-color: @window_bg_color;
+    outline: 1px solid rgba(255, 255, 255, 0.09);
+    outline-offset: -1px;
+}
+
+/* Prevent double-layered background on window root containers */
+window.view,
+window.nautilus-window.view,
+.nautilus-window.view {
+    background-color: transparent;
+}
+
+/* Nautilus (Files app): Grid View, List View & Content Pane */
+.nautilus-window .nautilus-grid-view,
+.nautilus-window .nautilus-list-view,
+.nautilus-window .content-pane,
+.nautilus-window .view,
+.nautilus-window gridview,
+.nautilus-window columnview,
+.nautilus-window listview,
+.nautilus-window listview.view,
+.nautilus-window scrolledwindow,
+.nautilus-window scrolledwindow viewport,
+.nautilus-window overlay,
+.nautilus-window tabview,
+.nautilus-window tabbar,
+.nautilus-window tabbar:not(.inline) .box,
+.nautilus-window tabbox,
+.nautilus-window tab,
+.nautilus-window split-view > .content,
+.nautilus-window navigation-split-view > .content,
+.nautilus-window overlay-split-view > .content,
+gridview.nautilus-grid-view,
+columnview.nautilus-list-view,
+#NautilusFileChooser .nautilus-grid-view,
+#NautilusFileChooser .nautilus-list-view,
+#NautilusFileChooser .content-pane,
+#NautilusFileChooser scrolledwindow,
+#NautilusFileChooser scrolledwindow viewport {
+    background-color: transparent;
+    background-image: none;
+}
+
+/* GNOME Calculator Translucent Canvas & Display */
+.card.display-container,
+.card.bit-panel,
+.history-view,
+mathdisplay,
+mathdisplay textview,
+mathdisplay textview text,
+mathconverter,
+mathconverter textview,
+widget.math-buttons,
+box.math-buttons,
+.math-buttons,
+.math-buttons .buttons,
+.math-buttons grid.buttons {
+    background-color: transparent;
+    background-image: none;
+}
+
+.display-container.card {
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* GNOME Software & Deep Container Overrides */
+window.background > contents > toastoverlay > leaflet > box,
+window.background > widget > toastoverlay > leaflet > box,
+window.background > contents > toastoverlay > leaflet > box + separator + box,
+window.background > widget > toastoverlay > leaflet > box + separator + box,
+window.background.csd > contents > leaflet.unfolded > box > stack.background,
+window.background.csd > widget > leaflet.unfolded > box > stack.background,
+window.background.csd > dialog-host > widget > widget > box > leaflet stack.background,
+window.background.csd > dialog-host > widget > widget > box > leaflet > headerbar.titlebar.tweak-titlebar-right,
+window.background.csd > contents > leaflet.unfolded > box > stack > widget > box > widget > headerbar,
+window.background.csd > contents > leaflet.unfolded > box > stack > widget > overlay > leaflet.folded > box > headerbar,
+window.background.csd > widget > leaflet.unfolded > box > stack > widget > box > widget > headerbar,
+window.background.csd > widget > leaflet.unfolded > box > stack > widget > overlay > leaflet.folded > box > headerbar,
+scrolledwindow.list-page > viewport > clamp > box,
+clamp.status-page,
+statuspage,
+statuspage > scrolledwindow > viewport,
+statuspage > scrolledwindow > viewport > box,
+featured-carousel,
+.featured-carousel,
+flowbox,
+flowboxchild,
+adw-view-stack,
+viewstack,
+navigation-view,
+navigation-page {
+    background-color: transparent;
+    background-image: none;
+}
+
+/* Generic View & Container Elements */
+window .view,
+window view,
+window textview,
+window textview text,
+window scrolledwindow,
+window scrolledwindow viewport,
+window viewport,
+window leaflet,
+window flap,
+window navigation-split-view,
+window navigation-split-view > .content,
+window overlay-split-view > .content,
+window adw-split-view,
+window split-view,
+window split-view > .content,
+window toolbarview,
+window toolbarview > .content,
+window preferencespage,
+window adw-preferences-page,
+window preferencesgroup > box,
+window stack,
+window stack.background,
+window stack.pages,
+window toastoverlay,
+window dialog-host,
+window paned,
+window frame,
+window clamp,
+window listview,
+window columnview,
+dialog-host > dialog.view sheet,
+iconview,
+.content-view,
+.content-pane {
+    background-color: transparent;
+    background-image: none;
+}
+
+/* Sidebar with Deeper Frosted Contrast (~70%) */
+window split-view > sidebar,
+window navigation-split-view > sidebar,
+window .navigation-sidebar,
+window placessidebar,
+window placessidebar list {
+    background-color: @sidebar_bg_color;
+}
+
+/* Frosted Headerbar (~75%) */
+window headerbar.titlebar,
+window headerbar,
+toolbarview > .top-bar.raised {
+    background-color: @headerbar_bg_color;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Standard UI Buttons */
+button {
+    color: @window_fg_color;
+}
+
+button:not(.flat):not(.suggested-action):not(.destructive-action):not(.titlebutton):not(.close):not(.minimize):not(.maximize):not(.windowcontrol) {
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+button:hover:not(.flat):not(.titlebutton):not(.close):not(.minimize):not(.maximize):not(.windowcontrol) {
+    background-color: rgba(255, 255, 255, 0.14);
+}
+
+/* Window Control Traffic Light Buttons: Clean with NO border, box or background */
+window headerbar windowcontrols button,
+window windowcontrols button,
+headerbar windowcontrols button,
+windowcontrols button,
+window button.titlebutton,
+button.titlebutton,
+window button.close,
+button.close,
+window button.minimize,
+button.minimize,
+window button.maximize,
+button.maximize,
+window headerbar windowcontrols button:hover,
+window windowcontrols button:hover,
+headerbar windowcontrols button:hover,
+windowcontrols button:hover,
+window button.titlebutton:hover,
+button.titlebutton:hover,
+window button.close:hover,
+button.close:hover,
+window button.minimize:hover,
+button.minimize:hover,
+window button.maximize:hover,
+button.maximize:hover,
+window headerbar windowcontrols button:active,
+window windowcontrols button:active,
+headerbar windowcontrols button:active,
+windowcontrols button:active,
+window button.titlebutton:active,
+button.titlebutton:active,
+window button.close:active,
+button.close:active,
+window button.minimize:active,
+button.minimize:active,
+window button.maximize:active,
+button.maximize:active,
+window headerbar windowcontrols button:backdrop,
+window windowcontrols button:backdrop,
+headerbar windowcontrols button:backdrop,
+windowcontrols button:backdrop {
+    background-color: transparent;
+    border: none;
+    border-color: transparent;
+    box-shadow: none;
+    outline: none;
+}
+
+/* Text Entries */
+entry {
+    background-color: rgba(0, 0, 0, 0.30);
+    color: @window_fg_color;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+}

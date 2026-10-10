@@ -1,0 +1,76 @@
+@define-color theme_bg_color rgba(28, 28, 30, 0.75);
+@define-color theme_base_color transparent;
+@define-color theme_fg_color #dedede;
+@define-color theme_text_color #dedede;
+@define-color bg_color rgba(28, 28, 30, 0.75);
+@define-color base_color transparent;
+@define-color fg_color #dedede;
+@define-color text_color #dedede;
+
+@import url("resource:///org/gnome/theme/gtk.css");
+
+window,
+window.background {
+    background-color: @theme_bg_color;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+window .view,
+window view,
+window scrolledwindow,
+window viewport,
+window stack,
+window paned,
+window notebook,
+window treeview,
+window .content-view {
+    background-color: transparent;
+}
+
+window .navigation-sidebar,
+window placessidebar {
+    background-color: rgba(22, 22, 24, 0.70);
+}
+
+window headerbar {
+    background-color: rgba(32, 32, 34, 0.75);
+}
+
+/* Window Control Traffic Light Buttons: Clean with NO border, box or background */
+headerbar windowcontrols button,
+windowcontrols button,
+button.titlebutton,
+button.close,
+button.minimize,
+button.maximize,
+headerbar windowcontrols button:hover,
+windowcontrols button:hover,
+button.titlebutton:hover,
+button.close:hover,
+button.minimize:hover,
+button.maximize:hover,
+headerbar windowcontrols button:active,
+windowcontrols button:active,
+button.titlebutton:active,
+button.close:active,
+button.minimize:active,
+button.maximize:active {
+    background-color: transparent;
+    border: none;
+    border-color: transparent;
+    box-shadow: none;
+    outline: none;
+}
+
+button {
+    color: @theme_fg_color;
+}
+
+button:not(.flat):not(.suggested-action):not(.destructive-action):not(.titlebutton):not(.close):not(.minimize):not(.maximize) {
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+button:hover:not(.flat):not(.titlebutton):not(.close):not(.minimize):not(.maximize) {
+    background-color: rgba(255, 255, 255, 0.14);
+}

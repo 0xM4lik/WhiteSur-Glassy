@@ -1,0 +1,21 @@
+# OS and Editor metadata
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Temporary / Backup files
+*.bak
+*.tmp
+*.orig
+
+# Node / Packaging
+node_modules/
+package-lock.json
+
+# Test outputs
+test/output/
+scratch/

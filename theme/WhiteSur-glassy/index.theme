@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=X-GNOME-Metatheme
+Name=WhiteSur-glassy
+Comment=A MacOS BigSur like Gtk+ theme with 75% translucent glassy backgrounds
+Encoding=UTF-8
+
+[X-GNOME-Metatheme]
+GtkTheme=WhiteSur-glassy
+MetacityTheme=WhiteSur-Dark
+IconTheme=WhiteSur-Dark
+CursorTheme=WhiteSur-cursors
+ButtonLayout=close,minimize,maximize:menu
