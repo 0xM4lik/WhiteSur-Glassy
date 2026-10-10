@@ -29,6 +29,7 @@ When using the [Blur my Shell](https://github.com/aunetx/blur-my-shell) extensio
 2. **100% Opaque & Crisp Foregrounds**: Text, icons, album covers, buttons, and inputs remain sharp, high-contrast, and fully readable.
 3. **No Double-Layering**: Deep container hierarchies in Nautilus and Libadwaita are stripped of opaque background overrides.
 4. **Third-Party App Parity**: Provides visual hooks and native transparency patches for Electron Flatpaks like **YouTube Music**.
+5. **Automated GNOME Extensions**: Installs and activates Dash to Dock, Blur my Shell, Logo Menu, and User Themes automatically.
 
 ---
 
@@ -42,6 +43,19 @@ When using the [Blur my Shell](https://github.com/aunetx/blur-my-shell) extensio
 | **GNOME Software** | **75%** (`rgba(28, 28, 30, 0.75)`) | Glass backdrop behind category tiles | 100% Opaque |
 | **YouTube Music (Flatpak)** | **75%** (`rgba(20, 20, 22, 0.75)`) | Alpha visual with 20px frosted backdrop | 100% Opaque |
 | **Window Traffic Lights** | — | Clean macOS circular dots (zero border) | 100% Opaque |
+
+---
+
+## Recommended GNOME Extensions
+
+WhiteSur-Glassy includes an automated extension installer (`./install.sh --extensions`) that queries [extensions.gnome.org](https://extensions.gnome.org), downloads the version matching your GNOME Shell release, and enables them:
+
+| Extension | UUID | Purpose |
+| :--- | :--- | :--- |
+| **[User Themes](https://extensions.gnome.org/extension/19/user-themes/)** | `user-theme@gnome-shell-extensions.gcampax.github.com` | Enables loading custom shell themes from `~/.themes`. |
+| **[Blur my Shell](https://extensions.gnome.org/extension/3193/blur-my-shell/)** | `blur-my-shell@aunetx` | Blurs wallpapers behind windows, panel, and dock. |
+| **[Dash to Dock](https://extensions.gnome.org/extension/307/dash-to-dock/)** | `dash-to-dock@micxgx.gmail.com` | Turns the dash into a customizable macOS-style glass dock. |
+| **[Logo Menu](https://extensions.gnome.org/extension/4451/logo-menu/)** | `logomenu@aryan_k` | Adds an Apple or distro logo to the panel corner. |
 
 ---
 
@@ -62,11 +76,14 @@ cd WhiteSur-Glassy
 You can install all components interactively, or pass specific flags:
 
 ```bash
-# Install everything (GTK theme, Libadwaita, YouTube Music patch, Blur my Shell config)
+# Install everything (Themes, Extensions, YouTube Music patch, Blur my Shell presets)
 ./install.sh --all
 
 # Install only GTK & Libadwaita themes
 ./install.sh --theme
+
+# Install only recommended GNOME extensions
+./install.sh --extensions
 
 # Patch only YouTube Music Flatpak
 ./install.sh --youtube-music
@@ -129,6 +146,7 @@ podman run --rm whitesur-glassy-test
 
 The test suite validates:
 - [x] Balanced CSS syntax across all GTK 3, GTK 4, and GNOME Shell stylesheets.
+- [x] Script syntax across installer, uninstaller, and extension installer.
 - [x] Automated installer directory creation and symlink accuracy.
 - [x] Desktop entry validity via `desktop-file-validate`.
 - [x] Python asar packing and integrity calculation.
@@ -155,6 +173,9 @@ To roll back only YouTube Music:
 
 - **Original WhiteSur Theme**: Created by [vinceliuice](https://github.com/vinceliuice/WhiteSur-gtk-theme).
 - **Blur my Shell Extension**: Created by [aunetx](https://github.com/aunetx/blur-my-shell).
+- **Dash to Dock Extension**: Created by [michele_g](https://github.com/micheleg/dash-to-dock).
+- **Logo Menu Extension**: Created by [Aryan_K](https://github.com/Aryan20/Logomenu).
+- **User Themes Extension**: Maintained by [GNOME](https://gitlab.gnome.org/GNOME/gnome-shell-extensions).
 - **YouTube Music Desktop App**: Maintained by [th-ch](https://github.com/th-ch/youtube-music).
 
 Distributed under the **GNU General Public License v3.0 (GPL-3.0)**. See [LICENSE](LICENSE) for full details.

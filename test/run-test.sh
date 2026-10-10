@@ -6,7 +6,7 @@ echo "   WhiteSur-Glassy Automated Test Suite      "
 echo "============================================="
 
 # 1. Test CSS Files Integrity
-echo "-> [TEST 1/5] Verifying CSS Files..."
+echo "-> [TEST 1/6] Verifying CSS Files..."
 for css_file in \
     "theme/libadwaita/gtk-WhiteSur-glassy.css" \
     "theme/WhiteSur-glassy/gtk-3.0/gtk.css" \
@@ -16,7 +16,6 @@ for css_file in \
         echo "Error: CSS file not found: $css_file"
         exit 1
     fi
-    # Check for basic balanced braces
     open_count=$(grep -o "{" "$css_file" | wc -l)
     close_count=$(grep -o "}" "$css_file" | wc -l)
     if [ "$open_count" -ne "$close_count" ]; then
@@ -26,8 +25,21 @@ for css_file in \
     echo "  ✓ $css_file verified ($open_count blocks)"
 done
 
-# 2. Test Installer in non-interactive mode
-echo "-> [TEST 2/5] Running installer (--theme)..."
+# 2. Test Shell Scripts Syntax
+echo "-> [TEST 2/6] Verifying Shell Scripts..."
+for sh_file in \
+    "install.sh" \
+    "uninstall.sh" \
+    "theme/libadwaita/setup-libadwaita.sh" \
+    "apps/youtube-music/patch-youtube-music.sh" \
+    "apps/youtube-music/restore-youtube-music.sh" \
+    "scripts/install-extensions.sh"; do
+    bash -n "$sh_file"
+    echo "  ✓ $sh_file syntax valid"
+done
+
+# 3. Test Installer in non-interactive mode
+echo "-> [TEST 3/6] Running installer (--theme)..."
 ./install.sh --theme
 
 # Verify files were placed in $HOME
@@ -45,8 +57,8 @@ if [ ! -L "$HOME/.config/gtk-4.0/gtk.css" ]; then
 fi
 echo "  ✓ Theme and Libadwaita files correctly placed in user profile"
 
-# 3. Test Desktop File Generation & Validation
-echo "-> [TEST 3/5] Validating Desktop Entry syntax..."
+# 4. Test Desktop File Generation & Validation
+echo "-> [TEST 4/6] Validating Desktop Entry syntax..."
 TEST_DESKTOP="/tmp/test-com.github.th_ch.youtube_music.desktop"
 cat << DESKTOP_EOF > "$TEST_DESKTOP"
 [Desktop Entry]
@@ -65,12 +77,11 @@ desktop-file-validate "$TEST_DESKTOP"
 rm -f "$TEST_DESKTOP"
 echo "  ✓ Desktop entry syntax valid"
 
-# 4. Test Python Asar Packing / Unpacking logic
-echo "-> [TEST 4/5] Testing asar packing engine..."
+# 5. Test Python Asar Packing / Unpacking logic
+echo "-> [TEST 5/6] Testing asar packing engine..."
 python3 -c "
 import os, struct, json, tempfile, shutil
 
-# Test mini asar creation and read
 with tempfile.TemporaryDirectory() as td:
     src_dir = os.path.join(td, 'src')
     os.makedirs(src_dir)
@@ -90,7 +101,6 @@ with tempfile.TemporaryDirectory() as td:
         f.write(h_padded)
         f.write(b'hello world')
         
-    # Read back
     with open(asar_path, 'rb') as f:
         magic, ts, ps, js = struct.unpack('<IIII', f.read(16))
         read_header = json.loads(f.read(js).decode('utf-8'))
@@ -98,8 +108,8 @@ with tempfile.TemporaryDirectory() as td:
 print('  ✓ Asar engine operational')
 "
 
-# 5. Test Uninstaller
-echo "-> [TEST 5/5] Running uninstaller..."
+# 6. Test Uninstaller
+echo "-> [TEST 6/6] Running uninstaller..."
 ./uninstall.sh
 
 if [ -d "$HOME/.themes/WhiteSur-glassy" ]; then

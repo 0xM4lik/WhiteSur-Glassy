@@ -9,6 +9,7 @@ USER_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/gtk-4.0"
 
 INSTALL_THEME=false
 INSTALL_LIBADWAITA=false
+INSTALL_EXTENSIONS=false
 INSTALL_YTM=false
 INSTALL_BLUR=false
 
@@ -17,8 +18,9 @@ show_help() {
 Usage: ./install.sh [OPTIONS]
 
 Options:
-  --all            Install all components (Theme, Libadwaita, YouTube Music, Blur settings)
+  --all            Install all components (Theme, Libadwaita, Extensions, YouTube Music, Blur settings)
   --theme          Install GTK 2/3/4 theme and Libadwaita glassy overrides
+  --extensions     Install recommended GNOME extensions (Dash to Dock, Blur my Shell, Logo Menu, User Themes)
   --youtube-music  Patch YouTube Music Flatpak for glassy transparency
   --blur-settings  Apply recommended Blur my Shell dconf presets
   --help, -h       Show this help message
@@ -34,6 +36,7 @@ if [ $# -gt 0 ]; then
             --all)
                 INSTALL_THEME=true
                 INSTALL_LIBADWAITA=true
+                INSTALL_EXTENSIONS=true
                 INSTALL_YTM=true
                 INSTALL_BLUR=true
                 shift
@@ -41,6 +44,10 @@ if [ $# -gt 0 ]; then
             --theme)
                 INSTALL_THEME=true
                 INSTALL_LIBADWAITA=true
+                shift
+                ;;
+            --extensions)
+                INSTALL_EXTENSIONS=true
                 shift
                 ;;
             --youtube-music)
@@ -70,6 +77,9 @@ else
     echo ""
     read -p "Install WhiteSur-glassy GTK & Libadwaita theme? [Y/n]: " ans_theme
     case "${ans_theme:-y}" in [yY]*) INSTALL_THEME=true; INSTALL_LIBADWAITA=true ;; esac
+
+    read -p "Install recommended GNOME extensions (Dash to Dock, Blur my Shell, Logo Menu, User Themes)? [y/N]: " ans_ext
+    case "$ans_ext" in [yY]*) INSTALL_EXTENSIONS=true ;; esac
 
     read -p "Patch YouTube Music Flatpak for transparency? [y/N]: " ans_ytm
     case "$ans_ytm" in [yY]*) INSTALL_YTM=true ;; esac
@@ -102,7 +112,15 @@ if [ "$INSTALL_LIBADWAITA" = true ]; then
     echo "[✓] Libadwaita glassy theme installed."
 fi
 
-# 3. Patch YouTube Music Flatpak
+# 3. Install GNOME Extensions
+if [ "$INSTALL_EXTENSIONS" = true ]; then
+    echo "-> Installing recommended GNOME extensions..."
+    if [ -f "$SCRIPT_DIR/scripts/install-extensions.sh" ]; then
+        bash "$SCRIPT_DIR/scripts/install-extensions.sh"
+    fi
+fi
+
+# 4. Patch YouTube Music Flatpak
 if [ "$INSTALL_YTM" = true ]; then
     echo "-> Checking YouTube Music Flatpak..."
     if command -v flatpak >/dev/null 2>&1 && flatpak list | grep -q "com.github.th_ch.youtube_music"; then
@@ -113,7 +131,7 @@ if [ "$INSTALL_YTM" = true ]; then
     fi
 fi
 
-# 4. Blur my Shell configuration
+# 5. Blur my Shell configuration
 if [ "$INSTALL_BLUR" = true ]; then
     echo "-> Applying Blur my Shell configuration..."
     if command -v dconf >/dev/null 2>&1 && [ -f "$SCRIPT_DIR/configs/blur-my-shell-glassy.dconf" ]; then
