@@ -252,4 +252,22 @@ fi
 
 echo ""
 echo "Installation complete!"
-echo "If elements don't update immediately, log out and back in (or press Alt+F2, 'r' on X11)."
+
+if [ -t 0 ]; then
+    read -p "Would you like to log out now to apply the changes? [y/N]: " ans_logout
+    case "$ans_logout" in
+        [yY]*)
+            echo "Logging out..."
+            if command -v gnome-session-quit >/dev/null 2>&1; then
+                gnome-session-quit --logout --no-prompt
+            elif [ -n "$XDG_SESSION_ID" ] && command -v loginctl >/dev/null 2>&1; then
+                loginctl terminate-session "$XDG_SESSION_ID"
+            fi
+            ;;
+        *)
+            echo "You can log out later for all changes to take effect."
+            ;;
+    esac
+else
+    echo "Log out and back in for all changes to take effect."
+fi
