@@ -119,8 +119,8 @@ window.background.csd > dialog-host > widget > widget > box > leaflet list.navig
 
 window.background.csd > dialog-host > widget > widget > box > leaflet > headerbar.titlebar.tweak-titlebar-left, window.background.csd > contents > leaflet.unfolded > box > headerbar,
 window.background.csd > widget > leaflet.unfolded > box > headerbar {
-  background-image: linear-gradient(to left, rgba(0, 0, 0, 0.06), transparent 6px);
-  background-color: color-mix(in srgb, @sidebar_bg_color 96%, transparent);
+  background-image: none;
+  background-color: transparent;
   border: none;
 }
 
@@ -129,7 +129,7 @@ window.background.csd > contents > leaflet.unfolded > box > stack > widget > ove
 window.background.csd > widget > leaflet.unfolded > box > stack > widget > box > widget > headerbar,
 window.background.csd > widget > leaflet.unfolded > box > stack > widget > overlay > leaflet.folded > box > headerbar {
   background-image: none;
-  background-color: @view_bg_color;
+  background-color: transparent;
   border: none;
 }
 
@@ -2365,7 +2365,7 @@ searchbar > revealer > box {
 searchbar:not(.inline) > revealer > box {
   border-style: solid;
   border-color: mix(currentColor,@view_bg_color,0.88);
-  background-color: @headerbar_bg_color;
+  background-color: transparent;
   border-width: 0 0 1px;
   box-shadow: none;
   color: @headerbar_fg_color;
@@ -2598,8 +2598,8 @@ headerbar {
   padding: 0;
   margin: 0;
   color: @headerbar_fg_color;
-  background-color: @headerbar_bg_color;
-  border-bottom: 1px solid @headerbar_darker_shade_color;
+  background-color: transparent;
+  border-bottom: none;
   box-shadow: none;
 }
 
@@ -2607,8 +2607,8 @@ headerbar:backdrop {
   opacity: 1;
   transition: 150ms ease-out;
   color: mix(@headerbar_fg_color,@headerbar_backdrop_color,0.3);
-  background-color: @headerbar_backdrop_color;
-  border-color: @headerbar_shade_color;
+  background-color: transparent;
+  border-color: transparent;
   box-shadow: none;
 }
 
@@ -2809,14 +2809,14 @@ headerbar windowhandle box.linked > button:checked {
 }
 
 .maximized headerbar {
-  background-color: @headerbar_bg_color;
-  border-color: @headerbar_darker_shade_color;
+  background-color: transparent;
+  border-color: transparent;
   box-shadow: none;
 }
 
 .maximized headerbar:backdrop {
-  background-color: @headerbar_backdrop_color;
-  border-color: alpha(@headerbar_darker_shade_color,0.65);
+  background-color: transparent;
+  border-color: transparent;
 }
 
 .maximized headerbar.flat, .maximized headerbar.flat:backdrop {
@@ -2953,7 +2953,7 @@ headerbar windowcontrols button.minimize:active {
 headerbar.default-decoration {
   min-height: 32px;
   padding: 0;
-  background-color: @headerbar_bg_color;
+  background-color: transparent;
   border: none;
   box-shadow: none;
 }
@@ -3286,7 +3286,7 @@ popover > contents {
   color: @window_fg_color;
   background-clip: padding-box;
   background-color: color-mix(in srgb, @popover_bg_color 96%, transparent);
-  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.15), 0 0 0 1px @headerbar_darker_shade_color;
+  box-shadow: none;
   border: 1px solid mix(white,color-mix(in srgb, @popover_bg_color 96%, transparent),0.92);
 }
 
@@ -8410,9 +8410,9 @@ tabbar .box {
   color: @window_fg_color;
   margin: 0;
   box-shadow: none;
-  border-bottom: 1px solid alpha(currentColor,0.12);
+  border-bottom: none;
   padding: 0;
-  background-color: mix(black,@headerbar_bg_color,0.85);
+  background-color: transparent;
 }
 
 tabbar:backdrop .box > scrolledwindow,

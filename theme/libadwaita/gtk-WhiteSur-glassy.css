@@ -7,6 +7,24 @@
 @define-color secondary_sidebar_bg_color rgba(24, 24, 26, 0.72);
 @define-color dialog_bg_color rgba(32, 32, 34, 0.85);
 @define-color popover_bg_color rgba(32, 32, 34, 0.85);
+@define-color headerbar_border_color transparent;
+@define-color headerbar_shade_color transparent;
+@define-color headerbar_darker_shade_color transparent;
+
+/* CSS Variables for Libadwaita / GTK4 modern widgets */
+:root {
+    --window-bg-color: rgba(28, 28, 30, 0.75);
+    --view-bg-color: transparent;
+    --sidebar-bg-color: rgba(22, 22, 24, 0.70);
+    --headerbar-bg-color: transparent;
+    --headerbar-backdrop-color: transparent;
+    --headerbar-border-color: transparent;
+    --headerbar-shade-color: transparent;
+    --headerbar-darker-shade-color: transparent;
+    --secondary-sidebar-bg-color: rgba(24, 24, 26, 0.72);
+    --dialog-bg-color: rgba(32, 32, 34, 0.85);
+    --popover-bg-color: rgba(32, 32, 34, 0.85);
+}
 
 /* Fully Opaque Foregrounds & Controls */
 @define-color window_fg_color #dedede;
@@ -170,38 +188,95 @@ window placessidebar list {
     background-color: @sidebar_bg_color;
 }
 
-/* Seamless Transparent Headerbars & Titlebars */
+/* Seamless Transparent Headerbars & Titlebars across ALL applications */
 headerbar,
 headerbar.titlebar,
 headerbar:backdrop,
 window headerbar,
 window headerbar.titlebar,
 window headerbar:backdrop,
+window.background headerbar,
+window.background.csd headerbar,
+window.csd headerbar,
 .titlebar,
+headerbar.main-header-bar,
+.main-header-bar,
+.main-header-bar:backdrop,
+.visual-bell-area,
+box.visual-bell-area,
+box.visual-bell-area headerbar,
+fullscreenbox,
+fullscreenbox > *,
+fullscreenbox headerbar,
+fullscreenbox revealer.top-bar,
+fullscreenbox revealer.raised.top-bar,
+.window-contents revealer.top-bar,
+.window-contents revealer.raised.top-bar,
+.window-contents headerbar,
+revealer.top-bar,
+revealer.raised.top-bar,
 toolbarview > .top-bar,
 toolbarview > .top-bar.raised,
+toolbarview > .top-bar.border,
+toolbarview > .top-bar.raised.border,
 toolbarview > revealer.top-bar,
 toolbarview > revealer.top-bar > windowhandle > box,
 fullscreenbox > toolbarview > revealer.top-bar,
 fullscreenbox > toolbarview > revealer.top-bar > windowhandle > box,
 tabbar,
 tabbar .box,
+tabbar tabbox,
 tabbar:backdrop .box,
-tabbox {
-    background-color: transparent !important;
-    background-image: none !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-/* Ptyxis Terminal: Seamless borderless glass header */
+tabbox,
+/* Ptyxis Terminal specific headerbars */
 .ptyxis-window headerbar,
 .ptyxis-window .main-header-bar,
 .ptyxis-window .visual-bell-area,
 .ptyxis-window tabbar,
-.ptyxis-window tabbar .box {
-    background-color: transparent !important;
-    background-image: none !important;
-    border-bottom: none !important;
+.ptyxis-window tabbar .box,
+.ptyxis-window tabbar tabbox,
+/* GNOME Software (App Store) specific headerbars */
+window.background.csd > dialog-host > widget > widget > box > leaflet > headerbar.titlebar.tweak-titlebar-left,
+window.background.csd > dialog-host > widget > widget > box > leaflet > headerbar.titlebar.tweak-titlebar-right,
+window.background.csd > contents > leaflet.unfolded > box > headerbar,
+window.background.csd > widget > leaflet.unfolded > box > headerbar,
+window.background.csd > contents > leaflet.unfolded > box > stack > widget > box > widget > headerbar,
+window.background.csd > contents > leaflet.unfolded > box > stack > widget > overlay > leaflet.folded > box > headerbar,
+window.background.csd > widget > leaflet.unfolded > box > stack > widget > box > widget > headerbar,
+window.background.csd > widget > leaflet.unfolded > box > stack > widget > overlay > leaflet.folded > box > headerbar,
+window.background.csd > contents > toastoverlay > leaflet > box > headerbar,
+window.background.csd > widget > toastoverlay > leaflet > box > headerbar,
+window.background.csd > dialog-host > widget > widget > box > leaflet > headerbar,
+window.background > contents > toastoverlay > leaflet > box > headerbar,
+window.background > widget > toastoverlay > leaflet > box > headerbar,
+#main_header,
+#sub_header,
+#details_header,
+leaflet headerbar,
+toastoverlay headerbar {
+    background-color: transparent;
+    background-image: none;
+    border: none;
+    border-bottom: none;
+    box-shadow: none;
+}
+
+/* Disable background shadow for popups on the titlebar */
+popover,
+popover > contents,
+popover > arrow,
+popover.menu,
+popover.menu > contents,
+headerbar popover,
+headerbar popover > contents,
+headerbar popover > arrow,
+window headerbar popover,
+window headerbar popover > contents,
+window headerbar popover > arrow,
+.titlebar popover,
+.titlebar popover > contents,
+.titlebar popover > arrow {
+    box-shadow: none;
 }
 
 /* Standard UI Buttons */

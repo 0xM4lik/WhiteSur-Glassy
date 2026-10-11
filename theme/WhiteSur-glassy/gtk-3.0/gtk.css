@@ -38,12 +38,18 @@ headerbar,
 headerbar:backdrop,
 .titlebar,
 terminal-window headerbar {
-    background-color: transparent !important;
-    background-image: none !important;
+    background-color: transparent;
+    background-image: none;
+    border-bottom: none;
+    box-shadow: none;
 }
 
-terminal-window headerbar {
-    border-bottom: none !important;
+/* Disable background shadow for popups on the titlebar */
+popover,
+popover > contents,
+headerbar popover,
+headerbar popover > contents {
+    box-shadow: none;
 }
 
 /* Window Control Traffic Light Buttons: Clean with NO border, box or background */

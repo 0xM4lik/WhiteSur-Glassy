@@ -37,12 +37,10 @@ if [ "$ACTION" = "install" ]; then
         fi
     fi
 
-    if [ ! -f "$TARGET_DIR/gtk-WhiteSur-Dark.css" ]; then
-        if [ -f "$SCRIPT_DIR/gtk-WhiteSur-Dark.css" ]; then
-            cp -f "$SCRIPT_DIR/gtk-WhiteSur-Dark.css" "$TARGET_DIR/gtk-WhiteSur-Dark.css"
-        elif [ -f "$TARGET_DIR/gtk-Dark.css" ]; then
-            cp -f "$TARGET_DIR/gtk-Dark.css" "$TARGET_DIR/gtk-WhiteSur-Dark.css"
-        fi
+    if [ -f "$SCRIPT_DIR/gtk-WhiteSur-Dark.css" ]; then
+        cp -f "$SCRIPT_DIR/gtk-WhiteSur-Dark.css" "$TARGET_DIR/gtk-WhiteSur-Dark.css"
+    elif [ -f "$TARGET_DIR/gtk-Dark.css" ] && [ ! -f "$TARGET_DIR/gtk-WhiteSur-Dark.css" ]; then
+        cp -f "$TARGET_DIR/gtk-Dark.css" "$TARGET_DIR/gtk-WhiteSur-Dark.css"
     fi
 
     ln -sf "$TARGET_DIR/gtk-WhiteSur-glassy.css" "$TARGET_DIR/gtk.css"
