@@ -5,4 +5,4 @@ interface-style='dark'
 [Profiles/default]
 bold-is-bright=false
 opacity=0.75
-palette='gnome'
+palette='WhiteSur-Glassy'

@@ -1,3 +1,5 @@
+@import url("resource:///org/gnome/theme/gtk.css");
+
 @define-color theme_bg_color rgba(28, 28, 30, 0.75);
 @define-color theme_base_color transparent;
 @define-color theme_fg_color #dedede;
@@ -7,14 +9,13 @@
 @define-color fg_color #dedede;
 @define-color text_color #dedede;
 
-@import url("resource:///org/gnome/theme/gtk.css");
-
 window,
 window.background {
-    background-color: @theme_bg_color;
+    background-color: rgba(28, 28, 30, 0.75);
     border: 1px solid rgba(255, 255, 255, 0.09);
 }
 
+/* Base transparent containers and views */
 window .view,
 window view,
 window scrolledwindow,
@@ -23,7 +24,84 @@ window stack,
 window paned,
 window notebook,
 window treeview,
-window .content-view {
+window .content-view,
+treeview,
+treeview.view,
+.view,
+treeview.view:hover,
+iconview,
+iconview:hover,
+scrolledwindow,
+viewport,
+stack,
+paned {
+    background-color: transparent;
+}
+
+/* Menubars & Toolbars (Virtual Machine Manager, standard GTK 3 apps) */
+menubar,
+.menubar,
+menubar:backdrop,
+.menubar:backdrop,
+window menubar,
+window .menubar,
+toolbar,
+.toolbar,
+toolbar.horizontal,
+toolbar:backdrop,
+.toolbar:backdrop,
+window toolbar,
+window .toolbar {
+    background-color: transparent;
+    background-image: none;
+    border: none;
+    box-shadow: none;
+}
+
+/* Notebooks & tab headers */
+notebook,
+notebook.frame,
+notebook > stack,
+notebook > stack:not(:only-child),
+notebook > header,
+notebook > header.top,
+notebook > header.bottom,
+notebook > header.left,
+notebook > header.right,
+window notebook,
+window notebook > stack,
+window notebook > header {
+    background-color: transparent;
+    background-image: none;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Treeview column header buttons */
+treeview.view > header > button,
+treeview.view > header > button:hover,
+treeview.view > header > button:active {
+    background-color: rgba(255, 255, 255, 0.06);
+    border: none;
+    box-shadow: none;
+}
+
+/* Virtual Machine Manager (virt-manager) specific overrides */
+window#vmm-manager,
+window#vmm-vmwindow,
+window#vmm-preferences,
+window.vmm-window {
+    background-color: @theme_bg_color;
+}
+
+window#vmm-manager menubar,
+window#vmm-manager toolbar,
+window#vmm-manager treeview,
+window#vmm-manager scrolledwindow,
+window#vmm-vmwindow menubar,
+window#vmm-vmwindow toolbar,
+window#vmm-vmwindow notebook,
+window#vmm-vmwindow treeview,
+window#vmm-vmwindow scrolledwindow {
     background-color: transparent;
 }
 
