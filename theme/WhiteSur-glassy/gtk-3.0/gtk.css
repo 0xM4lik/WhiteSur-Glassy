@@ -32,8 +32,18 @@ window placessidebar {
     background-color: rgba(22, 22, 24, 0.70);
 }
 
-window headerbar {
-    background-color: rgba(32, 32, 34, 0.75);
+/* Seamless Transparent Headerbars & Titlebars */
+window headerbar,
+headerbar,
+headerbar:backdrop,
+.titlebar,
+terminal-window headerbar {
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+terminal-window headerbar {
+    border-bottom: none !important;
 }
 
 /* Window Control Traffic Light Buttons: Clean with NO border, box or background */

@@ -2,7 +2,8 @@
 @define-color window_bg_color rgba(28, 28, 30, 0.75);
 @define-color view_bg_color transparent;
 @define-color sidebar_bg_color rgba(22, 22, 24, 0.70);
-@define-color headerbar_bg_color rgba(32, 32, 34, 0.75);
+@define-color headerbar_bg_color transparent;
+@define-color headerbar_backdrop_color transparent;
 @define-color secondary_sidebar_bg_color rgba(24, 24, 26, 0.72);
 @define-color dialog_bg_color rgba(32, 32, 34, 0.85);
 @define-color popover_bg_color rgba(32, 32, 34, 0.85);
@@ -169,12 +170,38 @@ window placessidebar list {
     background-color: @sidebar_bg_color;
 }
 
-/* Frosted Headerbar (~75%) */
-window headerbar.titlebar,
+/* Seamless Transparent Headerbars & Titlebars */
+headerbar,
+headerbar.titlebar,
+headerbar:backdrop,
 window headerbar,
-toolbarview > .top-bar.raised {
-    background-color: @headerbar_bg_color;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+window headerbar.titlebar,
+window headerbar:backdrop,
+.titlebar,
+toolbarview > .top-bar,
+toolbarview > .top-bar.raised,
+toolbarview > revealer.top-bar,
+toolbarview > revealer.top-bar > windowhandle > box,
+fullscreenbox > toolbarview > revealer.top-bar,
+fullscreenbox > toolbarview > revealer.top-bar > windowhandle > box,
+tabbar,
+tabbar .box,
+tabbar:backdrop .box,
+tabbox {
+    background-color: transparent !important;
+    background-image: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Ptyxis Terminal: Seamless borderless glass header */
+.ptyxis-window headerbar,
+.ptyxis-window .main-header-bar,
+.ptyxis-window .visual-bell-area,
+.ptyxis-window tabbar,
+.ptyxis-window tabbar .box {
+    background-color: transparent !important;
+    background-image: none !important;
+    border-bottom: none !important;
 }
 
 /* Standard UI Buttons */
