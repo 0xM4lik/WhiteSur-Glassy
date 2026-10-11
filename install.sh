@@ -11,6 +11,7 @@ INSTALL_THEME=false
 INSTALL_LIBADWAITA=false
 INSTALL_ICONS=false
 INSTALL_EXTENSIONS=false
+INSTALL_ROUNDED_BLUR=false
 INSTALL_TERMINAL=false
 INSTALL_SHELL=false
 INSTALL_CONFIGS=false
@@ -21,6 +22,7 @@ check_tool() {
 
 HAS_PYTHON=false
 HAS_GNOME_EXT=false
+HAS_ROUNDED_BLUR=false
 HAS_DCONF=false
 HAS_ICONS=false
 HAS_PTYXIS=false
@@ -34,6 +36,23 @@ if [ -d "$HOME/.local/share/icons/WhiteSur" ] || [ -d "/usr/share/icons/WhiteSur
     HAS_ICONS=true
 fi
 
+if python3 -c "import gi; gi.require_version('Blur', '1.0'); from gi.repository import Blur" 2>/dev/null; then
+    HAS_ROUNDED_BLUR=true
+elif command -v rpm >/dev/null 2>&1 && rpm -q --quiet gnome-rounded-blur 2>/dev/null; then
+    HAS_ROUNDED_BLUR=true
+elif command -v pacman >/dev/null 2>&1 && pacman -Q gnome-rounded-blur >/dev/null 2>&1; then
+    HAS_ROUNDED_BLUR=true
+elif command -v dpkg >/dev/null 2>&1 && dpkg -s gnome-rounded-blur >/dev/null 2>&1; then
+    HAS_ROUNDED_BLUR=true
+else
+    for p in /usr/lib64 /usr/lib /usr/lib/*-linux-gnu /usr/local/lib64 /usr/local/lib; do
+        if [ -f "$p/girepository-1.0/Blur-1.0.typelib" ] && { [ -f "$p/libblur-effect-1.0.so" ] || [ -f "$p/libblur-effect-1.0.so.1" ]; }; then
+            HAS_ROUNDED_BLUR=true
+            break
+        fi
+    done
+fi
+
 if check_tool gsettings; then
     gsettings list-schemas 2>/dev/null | grep -q "org.gnome.Ptyxis" && HAS_PTYXIS=true
     gsettings list-schemas 2>/dev/null | grep -q "org.gnome.Terminal.ProfilesList" && HAS_GNOME_TERM=true
@@ -44,10 +63,11 @@ show_help() {
 Usage: ./install.sh [OPTIONS]
 
 Options:
-  --all            Install everything (themes, window buttons, icons, extensions, terminal, shell, configs)
+  --all            Install everything (themes, window buttons, icons, extensions, rounded blur library, terminal, shell, configs)
   --theme          Install GTK 3/4 theme, Libadwaita overrides, and left-side window buttons
   --icons          Install WhiteSur icons
-  --extensions     Install GNOME extensions (Dash to Dock, Blur my Shell, Logo Menu, User Themes)
+  --extensions     Install GNOME extensions and gnome-rounded-blur library
+  --rounded-blur   Install gnome-rounded-blur library for Blur my Shell rounded corners
   --terminal       Set terminal transparency to 75% (Ptyxis and GNOME Terminal)
   --shell          Setup .bashrc and install Starship prompt
   --configs        Apply recommended extension and terminal settings
@@ -70,6 +90,12 @@ print_dependency_status() {
         echo "  - gnome-extensions: found"
     else
         echo "  - gnome-extensions: not found (needed to install extensions automatically)"
+    fi
+
+    if [ "$HAS_ROUNDED_BLUR" = true ]; then
+        echo "  - gnome-rounded-blur: installed"
+    else
+        echo "  - gnome-rounded-blur: not installed (needed for Blur my Shell rounded dynamic corners)"
     fi
 
     if [ "$HAS_ICONS" = true ]; then
@@ -103,6 +129,7 @@ if [ $# -gt 0 ]; then
                 INSTALL_LIBADWAITA=true
                 INSTALL_ICONS=true
                 INSTALL_EXTENSIONS=true
+                INSTALL_ROUNDED_BLUR=true
                 INSTALL_TERMINAL=true
                 INSTALL_SHELL=true
                 INSTALL_CONFIGS=true
@@ -119,6 +146,11 @@ if [ $# -gt 0 ]; then
                 ;;
             --extensions)
                 INSTALL_EXTENSIONS=true
+                INSTALL_ROUNDED_BLUR=true
+                shift
+                ;;
+            --rounded-blur|--blur)
+                INSTALL_ROUNDED_BLUR=true
                 shift
                 ;;
             --terminal)
@@ -153,27 +185,37 @@ else
     # Interactive mode
     print_dependency_status
 
-    read -p "Install GTK and Libadwaita theme (with macOS-style window buttons)? [Y/n]: " ans_theme
+    read -p "Install GTK and Libadwaita theme (with macOS-style window buttons)? [Y/n]: " ans_theme || true
     case "${ans_theme:-y}" in [yY]*) INSTALL_THEME=true; INSTALL_LIBADWAITA=true ;; esac
 
-    read -p "Install WhiteSur icons? [y/N]: " ans_icons
+    read -p "Install WhiteSur icons? [y/N]: " ans_icons || true
     case "$ans_icons" in [yY]*) INSTALL_ICONS=true ;; esac
 
     if [ "$HAS_GNOME_EXT" = true ]; then
-        read -p "Install GNOME extensions (Dash to Dock, Blur my Shell, Logo Menu, User Themes)? [y/N]: " ans_ext
-        case "$ans_ext" in [yY]*) INSTALL_EXTENSIONS=true ;; esac
+        read -p "Install GNOME extensions (Dash to Dock, Blur my Shell, Logo Menu, User Themes)? [y/N]: " ans_ext || true
+        case "$ans_ext" in
+            [yY]*)
+                INSTALL_EXTENSIONS=true
+                INSTALL_ROUNDED_BLUR=true
+                ;;
+        esac
     else
         echo "Skipping extensions (gnome-extensions tool is not installed)."
     fi
 
-    read -p "Set terminal transparency to 75% (Ptyxis / GNOME Terminal)? [Y/n]: " ans_term
+    if [ "$INSTALL_ROUNDED_BLUR" != true ]; then
+        read -p "Install gnome-rounded-blur (rounded dynamic corners for Blur my Shell)? [y/N]: " ans_blur || true
+        case "$ans_blur" in [yY]*) INSTALL_ROUNDED_BLUR=true ;; esac
+    fi
+
+    read -p "Set terminal transparency to 75% (Ptyxis / GNOME Terminal)? [Y/n]: " ans_term || true
     case "${ans_term:-y}" in [yY]*) INSTALL_TERMINAL=true ;; esac
 
-    read -p "Install shell config (.bashrc with Starship prompt)? [y/N]: " ans_shell
+    read -p "Install shell config (.bashrc with Starship prompt)? [y/N]: " ans_shell || true
     case "$ans_shell" in [yY]*) INSTALL_SHELL=true ;; esac
 
     if [ "$HAS_DCONF" = true ]; then
-        read -p "Apply recommended extension settings? [y/N]: " ans_configs
+        read -p "Apply recommended extension settings? [y/N]: " ans_configs || true
         case "$ans_configs" in [yY]*) INSTALL_CONFIGS=true ;; esac
     fi
 fi
@@ -218,21 +260,28 @@ if [ "$INSTALL_EXTENSIONS" = true ]; then
     fi
 fi
 
-# 5. Configure Terminal Transparency
+# 5. Install gnome-rounded-blur
+if [ "$INSTALL_ROUNDED_BLUR" = true ] && [ "$INSTALL_EXTENSIONS" != true ]; then
+    if [ -f "$SCRIPT_DIR/scripts/install-rounded-blur.sh" ]; then
+        bash "$SCRIPT_DIR/scripts/install-rounded-blur.sh"
+    fi
+fi
+
+# 6. Configure Terminal Transparency
 if [ "$INSTALL_TERMINAL" = true ]; then
     if [ -f "$SCRIPT_DIR/scripts/setup-terminal.sh" ]; then
         bash "$SCRIPT_DIR/scripts/setup-terminal.sh"
     fi
 fi
 
-# 6. Setup Shell Configuration
+# 7. Setup Shell Configuration
 if [ "$INSTALL_SHELL" = true ]; then
     if [ -f "$SCRIPT_DIR/scripts/setup-shell.sh" ]; then
         bash "$SCRIPT_DIR/scripts/setup-shell.sh"
     fi
 fi
 
-# 7. Apply Extension Configurations
+# 8. Apply Extension Configurations
 if [ "$INSTALL_CONFIGS" = true ]; then
     echo "Applying extension settings..."
     if [ "$HAS_DCONF" = true ]; then

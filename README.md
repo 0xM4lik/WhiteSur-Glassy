@@ -14,6 +14,7 @@ Normally, applying Blur my Shell to GTK4 and Libadwaita apps doesn't work well b
 - **Terminal transparency**: Automatically sets 75% background opacity in Ptyxis and GNOME Terminal.
 - **Shell config**: Clean `.bashrc` template that installs and configures the Starship prompt.
 - **Extension installer**: One-command setup for Blur my Shell, Dash to Dock, Logo Menu, and User Themes.
+- **Rounded dynamic corners**: Automatically installs [`gnome-rounded-blur`](https://github.com/aunetx/blur-my-shell/blob/master/scripts/GUIDE.md) so Blur my Shell renders rounded window corners with dynamic blur out of the box.
 
 ## Quick Start
 
@@ -32,7 +33,7 @@ Running `./install.sh` without flags gives you an interactive prompt where you c
 You can also pass flags directly:
 
 ```bash
-# Install everything (theme, icons, extensions, terminal, shell, presets)
+# Install everything (theme, icons, extensions, rounded blur library, terminal, shell, presets)
 ./install.sh --all
 
 # Only install the GTK/Libadwaita theme and window buttons
@@ -41,8 +42,11 @@ You can also pass flags directly:
 # Only install WhiteSur icons
 ./install.sh --icons
 
-# Only install GNOME extensions
+# Only install GNOME extensions and gnome-rounded-blur
 ./install.sh --extensions
+
+# Only install gnome-rounded-blur (rounded dynamic corners for Blur my Shell)
+./install.sh --rounded-blur
 
 # Set terminal transparency to 75% (Ptyxis / GNOME Terminal)
 ./install.sh --terminal
@@ -62,7 +66,7 @@ You can also pass flags directly:
 The installer can automatically download, compile, and enable these extensions:
 
 - **[User Themes](https://extensions.gnome.org/extension/19/user-themes/)**: Needed to load the shell theme from `~/.themes`.
-- **[Blur my Shell](https://extensions.gnome.org/extension/3193/blur-my-shell/)**: Blurs the desktop wallpaper behind windows and the panel.
+- **[Blur my Shell](https://extensions.gnome.org/extension/3193/blur-my-shell/)**: Blurs the desktop wallpaper behind windows and the panel. Includes automated installation of [`gnome-rounded-blur`](https://github.com/aunetx/blur-my-shell/blob/master/scripts/GUIDE.md) to enable rounded dynamic corners out of the box.
 - **[Dash to Dock](https://extensions.gnome.org/extension/307/dash-to-dock/)**: Dock at the bottom of the screen.
 - **[Logo Menu](https://extensions.gnome.org/extension/4451/logo-menu/)**: Apple logo menu in the top-left corner.
 

@@ -171,3 +171,8 @@ if installed_or_present_uuids:
 
 print("Extensions configured and enabled.")
 PYEOF
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$SCRIPT_DIR/install-rounded-blur.sh" ]; then
+    bash "$SCRIPT_DIR/install-rounded-blur.sh" || true
+fi

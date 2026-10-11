@@ -85,7 +85,7 @@ fi
 
 # 8. Clean up installed WhiteSur icons if present
 if [ -d "$DEST_ICONS_DIR/WhiteSur" ]; then
-    read -p "Remove installed WhiteSur icons from ~/.local/share/icons? [y/N]: " ans_icons
+    read -p "Remove installed WhiteSur icons from ~/.local/share/icons? [y/N]: " ans_icons || true
     case "$ans_icons" in
         [yY]*)
             echo "Removing WhiteSur icons..."
@@ -105,7 +105,7 @@ for ext in "${EXT_LIST[@]}"; do
 done
 
 if [ "$FOUND_EXTS" = true ]; then
-    read -p "Remove installed GNOME extensions (Blur my Shell, Dash to Dock, Logo Menu, User Themes)? [y/N]: " ans_exts
+    read -p "Remove installed GNOME extensions (Blur my Shell, Dash to Dock, Logo Menu, User Themes)? [y/N]: " ans_exts || true
     case "$ans_exts" in
         [yY]*)
             echo "Removing extensions from ~/.local/share/gnome-shell/extensions..."
@@ -114,6 +114,56 @@ if [ "$FOUND_EXTS" = true ]; then
                     rm -rf "$USER_EXT_DIR/$ext"
                 fi
             done
+            ;;
+    esac
+fi
+
+# 10. Clean up gnome-rounded-blur library if installed
+is_rounded_blur_installed() {
+    if python3 -c "import gi; gi.require_version('Blur', '1.0'); from gi.repository import Blur" 2>/dev/null; then
+        return 0
+    fi
+    if command -v rpm >/dev/null 2>&1 && rpm -q --quiet gnome-rounded-blur 2>/dev/null; then
+        return 0
+    fi
+    if command -v pacman >/dev/null 2>&1 && pacman -Q gnome-rounded-blur >/dev/null 2>&1; then
+        return 0
+    fi
+    if command -v dpkg >/dev/null 2>&1 && dpkg -s gnome-rounded-blur >/dev/null 2>&1; then
+        return 0
+    fi
+    for p in /usr/lib64 /usr/lib /usr/lib/*-linux-gnu /usr/local/lib64 /usr/local/lib; do
+        if [ -f "$p/girepository-1.0/Blur-1.0.typelib" ] && { [ -f "$p/libblur-effect-1.0.so" ] || [ -f "$p/libblur-effect-1.0.so.1" ]; }; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+if is_rounded_blur_installed; then
+    read -p "Uninstall gnome-rounded-blur library? [y/N]: " ans_blur || true
+    case "$ans_blur" in
+        [yY]*)
+            echo "Uninstalling gnome-rounded-blur..."
+            if command -v rpm >/dev/null 2>&1 && rpm -q --quiet gnome-rounded-blur 2>/dev/null; then
+                if command -v rpm-ostree >/dev/null 2>&1 && { [ -d /run/ostree-booted ] || [ -f /run/ostree-booted ]; }; then
+                    rpm-ostree uninstall gnome-rounded-blur 2>/dev/null || true
+                elif command -v dnf >/dev/null 2>&1; then
+                    if [ "$EUID" -eq 0 ]; then
+                        dnf remove -y gnome-rounded-blur 2>/dev/null || true
+                    else
+                        sudo dnf remove -y gnome-rounded-blur 2>/dev/null || true
+                    fi
+                fi
+            elif command -v pacman >/dev/null 2>&1 && pacman -Q gnome-rounded-blur >/dev/null 2>&1; then
+                if [ "$EUID" -eq 0 ]; then
+                    pacman -R --noconfirm gnome-rounded-blur 2>/dev/null || true
+                else
+                    sudo pacman -R --noconfirm gnome-rounded-blur 2>/dev/null || true
+                fi
+            else
+                curl -fsSL https://raw.githubusercontent.com/aunetx/blur-my-shell/master/scripts/rounded_blur_build.sh | bash -s -- -u 2>/dev/null || true
+            fi
             ;;
     esac
 fi
