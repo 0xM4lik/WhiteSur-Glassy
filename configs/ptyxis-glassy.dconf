@@ -4,5 +4,5 @@ interface-style='dark'
 
 [Profiles/default]
 bold-is-bright=false
-opacity=0.75
+opacity=0.70
 palette='WhiteSur-Glassy'
