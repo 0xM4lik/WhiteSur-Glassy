@@ -39,6 +39,9 @@ You can also pass flags directly:
 # Only install the GTK/Libadwaita theme and window buttons
 ./install.sh --theme
 
+# Only configure Flatpak overrides (GTK 3/4 theme, Libadwaita, icons)
+./install.sh --flatpak
+
 # Only install WhiteSur icons
 ./install.sh --icons
 

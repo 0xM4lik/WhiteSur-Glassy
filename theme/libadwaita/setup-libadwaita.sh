@@ -21,10 +21,11 @@ if [ "$ACTION" = "install" ]; then
     cp -f "$SOURCE_CSS" "$TARGET_DIR/gtk-WhiteSur-glassy.css"
 
     # Copy window controls assets
-    if [ ! -d "$TARGET_DIR/windows-assets" ]; then
-        if [ -d "$SCRIPT_DIR/windows-assets" ]; then
-            cp -rf "$SCRIPT_DIR/windows-assets" "$TARGET_DIR/"
-        elif [ -d "$HOME/Tweaks/WhiteSur-gtk-theme/src/assets/gtk/windows-assets/titlebutton" ]; then
+    if [ -d "$SCRIPT_DIR/windows-assets" ]; then
+        rm -rf "$TARGET_DIR/windows-assets"
+        cp -rf "$SCRIPT_DIR/windows-assets" "$TARGET_DIR/"
+    elif [ ! -d "$TARGET_DIR/windows-assets" ]; then
+        if [ -d "$HOME/Tweaks/WhiteSur-gtk-theme/src/assets/gtk/windows-assets/titlebutton" ]; then
             cp -rf "$HOME/Tweaks/WhiteSur-gtk-theme/src/assets/gtk/windows-assets/titlebutton" "$TARGET_DIR/windows-assets"
         elif command -v git >/dev/null 2>&1; then
             TMP_GTK=$(mktemp -d)
@@ -43,13 +44,17 @@ if [ "$ACTION" = "install" ]; then
         cp -f "$TARGET_DIR/gtk-Dark.css" "$TARGET_DIR/gtk-WhiteSur-Dark.css"
     fi
 
-    ln -sf "$TARGET_DIR/gtk-WhiteSur-glassy.css" "$TARGET_DIR/gtk.css"
-    ln -sf "$TARGET_DIR/gtk-WhiteSur-glassy.css" "$TARGET_DIR/gtk-dark.css"
+    # Use relative symlinks so they resolve properly inside Flatpak sandboxes
+    # where ~/.config/gtk-4.0 is mounted at ~/.var/app/<app-id>/config/gtk-4.0
+    ln -sf "gtk-WhiteSur-glassy.css" "$TARGET_DIR/gtk.css"
+    ln -sf "gtk-WhiteSur-glassy.css" "$TARGET_DIR/gtk-dark.css"
     echo "Libadwaita theme applied."
 
 elif [ "$ACTION" = "uninstall" ]; then
     echo "Removing Libadwaita theme overrides..."
     rm -f "$TARGET_DIR/gtk-WhiteSur-glassy.css"
+    rm -f "$TARGET_DIR/gtk-WhiteSur-Dark.css"
+    rm -rf "$TARGET_DIR/windows-assets"
     
     if [ -f "$TARGET_DIR/gtk.css.bak" ]; then
         mv -f "$TARGET_DIR/gtk.css.bak" "$TARGET_DIR/gtk.css"

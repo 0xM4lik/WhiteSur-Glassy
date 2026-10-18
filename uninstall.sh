@@ -3,7 +3,8 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LIBADWAITA_DIR="$SCRIPT_DIR/theme/libadwaita"
-DEST_THEMES_DIR="${XDG_DATA_HOME:-$HOME/.themes}"
+DEST_THEMES_DIR="$HOME/.themes"
+XDG_THEMES_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/themes"
 DEST_ICONS_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/icons"
 USER_EXT_DIR="$HOME/.local/share/gnome-shell/extensions"
 
@@ -37,11 +38,20 @@ if [ -d "$DEST_THEMES_DIR/WhiteSur-glassy" ]; then
     echo "Removing $DEST_THEMES_DIR/WhiteSur-glassy..."
     rm -rf "$DEST_THEMES_DIR/WhiteSur-glassy"
 fi
+if [ -d "$XDG_THEMES_DIR/WhiteSur-glassy" ]; then
+    echo "Removing $XDG_THEMES_DIR/WhiteSur-glassy..."
+    rm -rf "$XDG_THEMES_DIR/WhiteSur-glassy"
+fi
 
 # 4. Remove Libadwaita overrides and restore backups
 if [ -f "$LIBADWAITA_DIR/setup-libadwaita.sh" ]; then
     echo "Restoring GTK 4 / Libadwaita config..."
     bash "$LIBADWAITA_DIR/setup-libadwaita.sh" uninstall
+fi
+
+# 4b. Remove Flatpak overrides
+if [ -f "$SCRIPT_DIR/scripts/setup-flatpak.sh" ]; then
+    bash "$SCRIPT_DIR/scripts/setup-flatpak.sh" uninstall
 fi
 
 # 5. Revert terminal transparency back to opaque (1.0)
