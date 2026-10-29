@@ -2,12 +2,23 @@
 set -e
 
 ACTION="${1:-install}"
+VARIANT="${2:-transparent}"
 TARGET_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/gtk-4.0"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SOURCE_CSS="$SCRIPT_DIR/gtk-WhiteSur-glassy.css"
+TRANSPARENT_CSS="$SCRIPT_DIR/gtk-WhiteSur-Glassy-Transparent.css"
+TINTED_CSS="$SCRIPT_DIR/gtk-WhiteSur-Glassy-Tinted.css"
+
+case "$VARIANT" in
+    tinted|WhiteSur-Glassy-Tinted)
+        ACTIVE_CSS="gtk-WhiteSur-Glassy-Tinted.css"
+        ;;
+    transparent|WhiteSur-Glassy-Transparent|*)
+        ACTIVE_CSS="gtk-WhiteSur-Glassy-Transparent.css"
+        ;;
+esac
 
 if [ "$ACTION" = "install" ]; then
-    echo "Setting up GTK 4 / Libadwaita theme..."
+    echo "Setting up GTK 4 / Libadwaita theme ($ACTIVE_CSS)..."
     mkdir -p "$TARGET_DIR"
 
     # Backup existing gtk.css if not already backed up
@@ -18,7 +29,12 @@ if [ "$ACTION" = "install" ]; then
         cp -f "$TARGET_DIR/gtk-dark.css" "$TARGET_DIR/gtk-dark.css.bak"
     fi
 
-    cp -f "$SOURCE_CSS" "$TARGET_DIR/gtk-WhiteSur-glassy.css"
+    # Remove legacy single-variant CSS if present
+    rm -f "$TARGET_DIR/gtk-WhiteSur-glassy.css"
+
+    # Install both variants so switching is instant
+    cp -f "$TRANSPARENT_CSS" "$TARGET_DIR/gtk-WhiteSur-Glassy-Transparent.css"
+    cp -f "$TINTED_CSS" "$TARGET_DIR/gtk-WhiteSur-Glassy-Tinted.css"
 
     # Copy window controls assets
     if [ -d "$SCRIPT_DIR/windows-assets" ]; then
@@ -46,13 +62,15 @@ if [ "$ACTION" = "install" ]; then
 
     # Use relative symlinks so they resolve properly inside Flatpak sandboxes
     # where ~/.config/gtk-4.0 is mounted at ~/.var/app/<app-id>/config/gtk-4.0
-    ln -sf "gtk-WhiteSur-glassy.css" "$TARGET_DIR/gtk.css"
-    ln -sf "gtk-WhiteSur-glassy.css" "$TARGET_DIR/gtk-dark.css"
-    echo "Libadwaita theme applied."
+    ln -sf "$ACTIVE_CSS" "$TARGET_DIR/gtk.css"
+    ln -sf "$ACTIVE_CSS" "$TARGET_DIR/gtk-dark.css"
+    echo "Libadwaita theme applied ($ACTIVE_CSS)."
 
 elif [ "$ACTION" = "uninstall" ]; then
     echo "Removing Libadwaita theme overrides..."
     rm -f "$TARGET_DIR/gtk-WhiteSur-glassy.css"
+    rm -f "$TARGET_DIR/gtk-WhiteSur-Glassy-Transparent.css"
+    rm -f "$TARGET_DIR/gtk-WhiteSur-Glassy-Tinted.css"
     rm -f "$TARGET_DIR/gtk-WhiteSur-Dark.css"
     rm -rf "$TARGET_DIR/windows-assets"
     
@@ -69,6 +87,6 @@ elif [ "$ACTION" = "uninstall" ]; then
     fi
     echo "Restored previous Libadwaita config."
 else
-    echo "Usage: $0 [install|uninstall]"
+    echo "Usage: $0 [install|uninstall] [transparent|tinted]"
     exit 1
 fi

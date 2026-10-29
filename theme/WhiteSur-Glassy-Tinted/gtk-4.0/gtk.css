@@ -1,0 +1,622 @@
+/* Translucent Background Color Palette (~75% frosted glass) */
+@define-color window_bg_color rgba(28, 28, 30, 0.75);
+@define-color view_bg_color transparent;
+@define-color sidebar_bg_color rgba(22, 22, 24, 0.70);
+@define-color headerbar_bg_color transparent;
+@define-color headerbar_backdrop_color transparent;
+@define-color secondary_sidebar_bg_color rgba(24, 24, 26, 0.72);
+@define-color dialog_bg_color rgba(32, 32, 34, 0.85);
+@define-color popover_bg_color rgba(32, 32, 34, 0.85);
+@define-color headerbar_border_color transparent;
+@define-color headerbar_shade_color transparent;
+@define-color headerbar_darker_shade_color transparent;
+
+/* CSS Variables for Libadwaita / GTK4 modern widgets */
+:root {
+    --window-bg-color: rgba(28, 28, 30, 0.75);
+    --view-bg-color: transparent;
+    --sidebar-bg-color: rgba(22, 22, 24, 0.70);
+    --headerbar-bg-color: transparent;
+    --headerbar-backdrop-color: transparent;
+    --headerbar-border-color: transparent;
+    --headerbar-shade-color: transparent;
+    --headerbar-darker-shade-color: transparent;
+    --secondary-sidebar-bg-color: rgba(24, 24, 26, 0.72);
+    --dialog-bg-color: rgba(32, 32, 34, 0.85);
+    --popover-bg-color: rgba(32, 32, 34, 0.85);
+}
+
+/* Fully Opaque Foregrounds & Controls */
+@define-color window_fg_color #dedede;
+@define-color view_fg_color #dedede;
+@define-color sidebar_fg_color #dedede;
+@define-color headerbar_fg_color #ffffff;
+@define-color card_bg_color rgba(255, 255, 255, 0.08);
+@define-color card_fg_color #dedede;
+
+@import url("resource:///org/gnome/theme/gtk.css");
+
+/* Base Window Surface with 1px Specular Edge */
+window,
+window.background,
+window.csd,
+window.background.csd,
+window.nautilus-window,
+window.nautilus-window.background.csd,
+.nautilus-window.background.csd,
+.nautilus-window.background.csd:backdrop,
+#NautilusFileChooser.background.csd,
+#NautilusFileChooser.background.csd:backdrop {
+    background-color: @window_bg_color;
+    outline: 1px solid rgba(255, 255, 255, 0.09);
+    outline-offset: -1px;
+}
+
+window.view,
+window.nautilus-window.view,
+.nautilus-window.view {
+    background-color: transparent;
+}
+
+/* Nautilus (Files app): Grid View, List View & Content Pane */
+.nautilus-window .nautilus-grid-view,
+.nautilus-window .nautilus-list-view,
+.nautilus-window .content-pane,
+.nautilus-window .view,
+.nautilus-window gridview,
+.nautilus-window columnview,
+.nautilus-window listview,
+.nautilus-window listview.view,
+.nautilus-window scrolledwindow,
+.nautilus-window scrolledwindow viewport,
+.nautilus-window overlay,
+.nautilus-window tabview,
+.nautilus-window tabbar,
+.nautilus-window tabbar:not(.inline) .box,
+.nautilus-window tabbox,
+.nautilus-window tab,
+.nautilus-window split-view > .content,
+.nautilus-window navigation-split-view > .content,
+.nautilus-window overlay-split-view > .content,
+gridview.nautilus-grid-view,
+columnview.nautilus-list-view,
+#NautilusFileChooser .nautilus-grid-view,
+#NautilusFileChooser .nautilus-list-view,
+#NautilusFileChooser .content-pane,
+#NautilusFileChooser scrolledwindow,
+#NautilusFileChooser scrolledwindow viewport {
+    background-color: transparent;
+    background-image: none;
+}
+
+/* GNOME Calculator Translucent Canvas & Display */
+.card.display-container,
+.card.bit-panel,
+.history-view,
+mathdisplay,
+mathdisplay textview,
+mathdisplay textview text,
+mathconverter,
+mathconverter textview,
+widget.math-buttons,
+box.math-buttons,
+.math-buttons,
+.math-buttons .buttons,
+.math-buttons grid.buttons {
+    background-color: transparent;
+    background-image: none;
+}
+
+.display-container.card {
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* GNOME Software & Deep Container Overrides */
+window.background > contents > toastoverlay > leaflet > box,
+window.background > widget > toastoverlay > leaflet > box,
+window.background > contents > toastoverlay > leaflet > box + separator + box,
+window.background > widget > toastoverlay > leaflet > box + separator + box,
+window.background.csd > contents > leaflet.unfolded > box > stack.background,
+window.background.csd > widget > leaflet.unfolded > box > stack.background,
+window.background.csd > dialog-host > widget > widget > box > leaflet stack.background,
+window.background.csd > dialog-host > widget > widget > box > leaflet > headerbar.titlebar.tweak-titlebar-right,
+window.background.csd > contents > leaflet.unfolded > box > stack > widget > box > widget > headerbar,
+window.background.csd > contents > leaflet.unfolded > box > stack > widget > overlay > leaflet.folded > box > headerbar,
+window.background.csd > widget > leaflet.unfolded > box > stack > widget > box > widget > headerbar,
+window.background.csd > widget > leaflet.unfolded > box > stack > widget > overlay > leaflet.folded > box > headerbar,
+scrolledwindow.list-page > viewport > clamp > box,
+clamp.status-page,
+statuspage,
+statuspage > scrolledwindow > viewport,
+statuspage > scrolledwindow > viewport > box,
+featured-carousel,
+.featured-carousel,
+flowbox,
+flowboxchild,
+adw-view-stack,
+viewstack,
+navigation-view,
+navigation-page {
+    background-color: transparent;
+    background-image: none;
+}
+
+/* Generic View & Container Elements */
+window .view,
+window view,
+window textview,
+window textview text,
+window scrolledwindow,
+window scrolledwindow viewport,
+window viewport,
+window leaflet,
+window flap,
+window navigation-split-view,
+window navigation-split-view > .content,
+window overlay-split-view > .content,
+window adw-split-view,
+window split-view,
+window split-view > .content,
+window toolbarview,
+window toolbarview > .content,
+window preferencespage,
+window adw-preferences-page,
+window preferencesgroup > box,
+window stack,
+window stack.background,
+window stack.pages,
+window toastoverlay,
+window dialog-host,
+window paned,
+window frame,
+window clamp,
+window listview,
+window columnview,
+dialog-host > dialog.view sheet,
+iconview,
+.content-view,
+.content-pane {
+    background-color: transparent;
+    background-image: none;
+}
+
+/* Ptyxis Terminal: glassy translucent body background (~75% single surface) */
+window.ptyxis-window,
+window.ptyxis-window.background,
+.ptyxis-window,
+.ptyxis-window.background,
+window.background.csd > .window-contents,
+window.background.csd > .window-contents:backdrop {
+    background-color: @window_bg_color;
+}
+
+/* Ensure inner terminal containers remain 100% transparent so opacity never stacks */
+window.ptyxis-window .window-contents,
+window.ptyxis-window .window-contents:backdrop,
+window.ptyxis-window fullscreenbox,
+window.ptyxis-window fullscreenbox > *,
+window.ptyxis-window fullscreenbox:backdrop,
+window.ptyxis-window fullscreenbox:backdrop > *,
+window.ptyxis-window toolbarview,
+window.ptyxis-window toolbarview:backdrop,
+window.ptyxis-window toolbarview > .content,
+window.ptyxis-window toolbarview > .content:backdrop,
+.ptyxis-window .window-contents,
+.ptyxis-window .window-contents:backdrop,
+.ptyxis-window fullscreenbox,
+.ptyxis-window fullscreenbox > *,
+.ptyxis-window fullscreenbox:backdrop,
+.ptyxis-window fullscreenbox:backdrop > *,
+.ptyxis-window toolbarview,
+.ptyxis-window toolbarview:backdrop,
+.ptyxis-window toolbarview > .content,
+.ptyxis-window toolbarview > .content:backdrop {
+    background-color: transparent;
+    background-image: none;
+}
+
+/* Sidebar with Deeper Frosted Contrast (~70%) */
+window split-view > sidebar,
+window navigation-split-view > sidebar,
+window .navigation-sidebar,
+window placessidebar,
+window placessidebar list {
+    background-color: @sidebar_bg_color;
+}
+
+/* Seamless Transparent Headerbars & Titlebars across ALL applications (focused & backdrop) */
+headerbar,
+headerbar.titlebar,
+headerbar:backdrop,
+headerbar.titlebar:backdrop,
+window headerbar,
+window headerbar.titlebar,
+window headerbar:backdrop,
+window headerbar.titlebar:backdrop,
+window.background headerbar,
+window.background headerbar:backdrop,
+window.background.csd headerbar,
+window.background.csd headerbar:backdrop,
+window.csd headerbar,
+window.csd headerbar:backdrop,
+.titlebar,
+.titlebar:backdrop,
+headerbar.main-header-bar,
+headerbar.main-header-bar:backdrop,
+.main-header-bar,
+.main-header-bar:backdrop,
+.visual-bell-area,
+.visual-bell-area:backdrop,
+box.visual-bell-area,
+box.visual-bell-area:backdrop,
+box.visual-bell-area headerbar,
+box.visual-bell-area headerbar:backdrop,
+fullscreenbox,
+fullscreenbox:backdrop,
+fullscreenbox > *,
+fullscreenbox:backdrop > *,
+fullscreenbox headerbar,
+fullscreenbox headerbar:backdrop,
+fullscreenbox revealer.top-bar,
+fullscreenbox revealer.top-bar:backdrop,
+fullscreenbox revealer.raised.top-bar,
+fullscreenbox revealer.raised.top-bar:backdrop,
+fullscreenbox > toolbarview,
+fullscreenbox > toolbarview:backdrop,
+fullscreenbox > toolbarview > .top-bar,
+fullscreenbox > toolbarview > .top-bar:backdrop,
+fullscreenbox > toolbarview > .top-bar.raised,
+fullscreenbox > toolbarview > .top-bar.raised:backdrop,
+fullscreenbox > toolbarview > revealer.top-bar,
+fullscreenbox > toolbarview > revealer.top-bar:backdrop,
+fullscreenbox > toolbarview > revealer.raised.top-bar,
+fullscreenbox > toolbarview > revealer.raised.top-bar:backdrop,
+fullscreenbox > toolbarview > revealer.top-bar > windowhandle,
+fullscreenbox > toolbarview > revealer.top-bar:backdrop > windowhandle,
+fullscreenbox > toolbarview > revealer.raised.top-bar > windowhandle,
+fullscreenbox > toolbarview > revealer.raised.top-bar:backdrop > windowhandle,
+fullscreenbox > toolbarview > revealer.top-bar > windowhandle > box,
+fullscreenbox > toolbarview > revealer.top-bar:backdrop > windowhandle > box,
+fullscreenbox > toolbarview > revealer.raised.top-bar > windowhandle > box,
+fullscreenbox > toolbarview > revealer.raised.top-bar:backdrop > windowhandle > box,
+.window-contents revealer.top-bar,
+.window-contents revealer.top-bar:backdrop,
+.window-contents revealer.raised.top-bar,
+.window-contents revealer.raised.top-bar:backdrop,
+.window-contents headerbar,
+.window-contents headerbar:backdrop,
+revealer.top-bar,
+revealer.top-bar:backdrop,
+revealer.raised.top-bar,
+revealer.raised.top-bar:backdrop,
+toolbarview > .top-bar,
+toolbarview > .top-bar:backdrop,
+toolbarview > .top-bar.raised,
+toolbarview > .top-bar.raised:backdrop,
+toolbarview > .top-bar.border,
+toolbarview > .top-bar.border:backdrop,
+toolbarview > .top-bar.raised.border,
+toolbarview > .top-bar.raised.border:backdrop,
+toolbarview > revealer.top-bar,
+toolbarview > revealer.top-bar:backdrop,
+toolbarview > revealer.raised.top-bar,
+toolbarview > revealer.raised.top-bar:backdrop,
+toolbarview > revealer.top-bar > windowhandle,
+toolbarview > revealer.top-bar:backdrop > windowhandle,
+toolbarview > revealer.raised.top-bar > windowhandle,
+toolbarview > revealer.raised.top-bar:backdrop > windowhandle,
+toolbarview > revealer.top-bar > windowhandle > box,
+toolbarview > revealer.top-bar:backdrop > windowhandle > box,
+toolbarview > revealer.raised.top-bar > windowhandle > box,
+toolbarview > revealer.raised.top-bar:backdrop > windowhandle > box,
+tabbar,
+tabbar:backdrop,
+tabbar .box,
+tabbar .box:backdrop,
+tabbar tabbox,
+tabbar tabbox:backdrop,
+tabbox,
+tabbox:backdrop,
+/* Ptyxis Terminal specific headerbars & window handles (focused & backdrop) */
+window.ptyxis-window headerbar,
+window.ptyxis-window headerbar:backdrop,
+window.ptyxis-window .main-header-bar,
+window.ptyxis-window .main-header-bar:backdrop,
+window.ptyxis-window .visual-bell-area,
+window.ptyxis-window .visual-bell-area:backdrop,
+window.ptyxis-window revealer.top-bar,
+window.ptyxis-window revealer.top-bar:backdrop,
+window.ptyxis-window revealer.raised.top-bar,
+window.ptyxis-window revealer.raised.top-bar:backdrop,
+window.ptyxis-window revealer.top-bar > windowhandle,
+window.ptyxis-window revealer.top-bar:backdrop > windowhandle,
+window.ptyxis-window revealer.raised.top-bar > windowhandle,
+window.ptyxis-window revealer.raised.top-bar:backdrop > windowhandle,
+window.ptyxis-window .window-contents revealer.top-bar,
+window.ptyxis-window .window-contents revealer.top-bar:backdrop,
+window.ptyxis-window .window-contents revealer.raised.top-bar,
+window.ptyxis-window .window-contents revealer.raised.top-bar:backdrop,
+window.ptyxis-window .window-contents > revealer windowhandle,
+window.ptyxis-window .window-contents > revealer windowhandle:backdrop,
+window.ptyxis-window .window-contents revealer windowhandle,
+window.ptyxis-window .window-contents revealer windowhandle:backdrop,
+window.ptyxis-window windowhandle,
+window.ptyxis-window windowhandle:backdrop,
+window.ptyxis-window windowhandle > box,
+window.ptyxis-window windowhandle:backdrop > box,
+window.ptyxis-window tabbar,
+window.ptyxis-window tabbar:backdrop,
+window.ptyxis-window tabbar .box,
+window.ptyxis-window tabbar .box:backdrop,
+window.ptyxis-window tabbar tabbox,
+window.ptyxis-window tabbar tabbox:backdrop,
+.ptyxis-window headerbar,
+.ptyxis-window headerbar:backdrop,
+.ptyxis-window .main-header-bar,
+.ptyxis-window .main-header-bar:backdrop,
+.ptyxis-window .visual-bell-area,
+.ptyxis-window .visual-bell-area:backdrop,
+.ptyxis-window revealer.top-bar,
+.ptyxis-window revealer.top-bar:backdrop,
+.ptyxis-window revealer.raised.top-bar,
+.ptyxis-window revealer.raised.top-bar:backdrop,
+.ptyxis-window revealer.top-bar > windowhandle,
+.ptyxis-window revealer.top-bar:backdrop > windowhandle,
+.ptyxis-window revealer.raised.top-bar > windowhandle,
+.ptyxis-window revealer.raised.top-bar:backdrop > windowhandle,
+.ptyxis-window .window-contents revealer.top-bar,
+.ptyxis-window .window-contents revealer.top-bar:backdrop,
+.ptyxis-window .window-contents revealer.raised.top-bar,
+.ptyxis-window .window-contents revealer.raised.top-bar:backdrop,
+.ptyxis-window .window-contents > revealer windowhandle,
+.ptyxis-window .window-contents > revealer windowhandle:backdrop,
+.ptyxis-window .window-contents revealer windowhandle,
+.ptyxis-window .window-contents revealer windowhandle:backdrop,
+.ptyxis-window windowhandle,
+.ptyxis-window windowhandle:backdrop,
+.ptyxis-window windowhandle > box,
+.ptyxis-window windowhandle:backdrop > box,
+.ptyxis-window tabbar,
+.ptyxis-window tabbar:backdrop,
+.ptyxis-window tabbar .box,
+.ptyxis-window tabbar .box:backdrop,
+.ptyxis-window tabbar tabbox,
+.ptyxis-window tabbar tabbox:backdrop,
+/* GNOME Software (App Store) specific headerbars */
+window.background.csd > dialog-host > widget > widget > box > leaflet > headerbar.titlebar.tweak-titlebar-left,
+window.background.csd > dialog-host > widget > widget > box > leaflet > headerbar.titlebar.tweak-titlebar-right,
+window.background.csd > contents > leaflet.unfolded > box > headerbar,
+window.background.csd > widget > leaflet.unfolded > box > headerbar,
+window.background.csd > contents > leaflet.unfolded > box > stack > widget > box > widget > headerbar,
+window.background.csd > contents > leaflet.unfolded > box > stack > widget > overlay > leaflet.folded > box > headerbar,
+window.background.csd > widget > leaflet.unfolded > box > stack > widget > box > widget > headerbar,
+window.background.csd > widget > leaflet.unfolded > box > stack > widget > overlay > leaflet.folded > box > headerbar,
+window.background.csd > contents > toastoverlay > leaflet > box > headerbar,
+window.background.csd > widget > toastoverlay > leaflet > box > headerbar,
+window.background.csd > dialog-host > widget > widget > box > leaflet > headerbar,
+window.background > contents > toastoverlay > leaflet > box > headerbar,
+window.background > widget > toastoverlay > leaflet > box > headerbar,
+#main_header,
+#sub_header,
+#details_header,
+leaflet headerbar,
+toastoverlay headerbar {
+    background-color: transparent;
+    background-image: none;
+    border: none;
+    border-bottom: none;
+    box-shadow: none;
+}
+
+/* Disable background shadow for popups on the titlebar */
+popover,
+popover > contents,
+popover > arrow,
+popover.menu,
+popover.menu > contents,
+headerbar popover,
+headerbar popover > contents,
+headerbar popover > arrow,
+window headerbar popover,
+window headerbar popover > contents,
+window headerbar popover > arrow,
+.titlebar popover,
+.titlebar popover > contents,
+.titlebar popover > arrow {
+    box-shadow: none;
+}
+
+/* Standard UI Buttons */
+button {
+    color: @window_fg_color;
+}
+
+button:not(.flat):not(.suggested-action):not(.destructive-action):not(.titlebutton):not(.close):not(.minimize):not(.maximize):not(.windowcontrol) {
+    background-color: rgba(255, 255, 255, 0.08);
+    border: none;
+}
+
+button:hover:not(.flat):not(.titlebutton):not(.close):not(.minimize):not(.maximize):not(.windowcontrol) {
+    background-color: rgba(255, 255, 255, 0.14);
+}
+
+/* Window Control Traffic Light Buttons: Clean with NO border, box or background */
+window headerbar windowcontrols button,
+window windowcontrols button,
+headerbar windowcontrols button,
+windowcontrols button,
+window button.titlebutton,
+button.titlebutton,
+window button.close,
+button.close,
+window button.minimize,
+button.minimize,
+window button.maximize,
+button.maximize,
+window headerbar windowcontrols button:hover,
+window windowcontrols button:hover,
+headerbar windowcontrols button:hover,
+windowcontrols button:hover,
+window button.titlebutton:hover,
+button.titlebutton:hover,
+window button.close:hover,
+button.close:hover,
+window button.minimize:hover,
+button.minimize:hover,
+window button.maximize:hover,
+button.maximize:hover,
+window headerbar windowcontrols button:active,
+window windowcontrols button:active,
+headerbar windowcontrols button:active,
+windowcontrols button:active,
+window button.titlebutton:active,
+button.titlebutton:active,
+window button.close:active,
+button.close:active,
+window button.minimize:active,
+button.minimize:active,
+window button.maximize:active,
+button.maximize:active,
+window headerbar windowcontrols button:backdrop,
+window windowcontrols button:backdrop,
+headerbar windowcontrols button:backdrop,
+windowcontrols button:backdrop {
+    background-color: transparent;
+    border: none;
+    border-color: transparent;
+    box-shadow: none;
+    outline: none;
+}
+
+/* Text Entries */
+entry {
+    background-color: rgba(0, 0, 0, 0.30);
+    color: @window_fg_color;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+/* ==============================================================================
+   Extended Application Support
+   ============================================================================== */
+
+/* GNOME Text Editor (org.gnome.TextEditor) */
+window.editor,
+window.editor .editor,
+window.editor textview,
+window.editor textview text,
+window.editor gtksourceview,
+window.editor gtksourceview text,
+window.editor gutter,
+window.editor gutter.left,
+window.editor gutter.right,
+window.editor gutter.top,
+window.editor gutter.bottom,
+window.editor overviewmap,
+window.editor scrolledwindow.editor-scrolledwindow,
+gtksourceview,
+gtksourceview text,
+textview.editor,
+textview.editor text {
+    background-color: transparent;
+    background-image: none;
+}
+
+/* GNOME Calendar (org.gnome.Calendar) */
+window.calendar,
+window.calendar-window,
+calendar,
+calendar > grid,
+calendar-view,
+gcal-month-view,
+gcal-month-cell,
+gcal-week-view,
+gcal-week-header,
+gcal-day-view,
+gcal-agenda-view,
+.month-view,
+.week-view,
+.day-view,
+.agenda-view,
+.year-view,
+.calendar-view {
+    background-color: transparent;
+    background-image: none;
+}
+
+/* GNOME System Monitor (gnome-system-monitor) */
+window.system-monitor,
+load-graph,
+gsm-load-graph,
+box.graph-box,
+scrolledwindow.procs-page,
+scrolledwindow.resources-page,
+scrolledwindow.disks-page {
+    background-color: transparent;
+    background-image: none;
+}
+
+/* GNOME Disks (gnome-disk-utility) */
+window.disks-window,
+.disk-volume-element,
+.drive-element,
+box.drive-box,
+box.volume-box {
+    background-color: transparent;
+    background-image: none;
+}
+
+/* GNOME Weather & Clocks */
+weather-page,
+hourly-forecast-frame,
+weekly-forecast-frame,
+.forecast-card,
+clock-card,
+alarm-card,
+stopwatch-view,
+timer-view,
+clocks-window {
+    background-color: transparent;
+    background-image: none;
+}
+
+/* GNOME Contacts, Bottles & Pika Backup */
+contact-sheet,
+contacts-avatar,
+contact-entry,
+bottle-card,
+.bottle-card,
+status-page,
+adw-status-page {
+    background-color: transparent;
+    background-image: none;
+}
+
+/* Document & Image Viewers (Evince, Papers, Loupe, Music) */
+evview,
+evdocumentview,
+evsidebar,
+scrolledwindow.ev-view,
+loupe-image-view,
+.player-bar {
+    background-color: transparent;
+    background-image: none;
+}
+
+/* Modern Libadwaita Widgets & Rows */
+adw-banner,
+adw-tab-bar,
+adw-tab-overview,
+adw-view-switcher-bar,
+adw-toast-overlay,
+adw-navigation-view,
+adw-navigation-page,
+adw-view-stack,
+adw-action-row,
+adw-expander-row,
+adw-preferences-page,
+adw-preferences-group,
+adw-preferences-group > box {
+    background-color: transparent;
+    background-image: none;
+}

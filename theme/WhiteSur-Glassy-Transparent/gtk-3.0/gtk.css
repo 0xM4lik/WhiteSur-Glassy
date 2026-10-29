@@ -1,0 +1,227 @@
+@import url("resource:///org/gnome/theme/gtk.css");
+
+@define-color theme_bg_color transparent;
+@define-color theme_base_color transparent;
+@define-color theme_fg_color #dedede;
+@define-color theme_text_color #dedede;
+@define-color bg_color transparent;
+@define-color base_color transparent;
+@define-color fg_color #dedede;
+@define-color text_color #dedede;
+
+window,
+window.background,
+dialog,
+.dialog,
+messagedialog {
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+/* Base transparent containers and views */
+window .view,
+window view,
+window scrolledwindow,
+window viewport,
+window stack,
+window paned,
+window notebook,
+window treeview,
+window .content-view,
+treeview,
+treeview.view,
+.view,
+treeview.view:hover,
+iconview,
+iconview:hover,
+scrolledwindow,
+viewport,
+stack,
+paned {
+    background-color: transparent;
+}
+
+/* Menubars & Toolbars (Virtual Machine Manager, standard GTK 3 apps) */
+menubar,
+.menubar,
+menubar:backdrop,
+.menubar:backdrop,
+window menubar,
+window .menubar,
+toolbar,
+.toolbar,
+toolbar.horizontal,
+toolbar:backdrop,
+.toolbar:backdrop,
+window toolbar,
+window .toolbar {
+    background-color: transparent;
+    background-image: none;
+    border: none;
+    box-shadow: none;
+}
+
+/* Notebooks & tab headers */
+notebook,
+notebook.frame,
+notebook > stack,
+notebook > stack:not(:only-child),
+notebook > header,
+notebook > header.top,
+notebook > header.bottom,
+notebook > header.left,
+notebook > header.right,
+window notebook,
+window notebook > stack,
+window notebook > header {
+    background-color: transparent;
+    background-image: none;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Treeview column header buttons */
+treeview.view > header > button,
+treeview.view > header > button:hover,
+treeview.view > header > button:active {
+    background-color: rgba(255, 255, 255, 0.06);
+    border: none;
+    box-shadow: none;
+}
+
+/* Virtual Machine Manager (virt-manager) specific overrides */
+window#vmm-manager,
+window#vmm-vmwindow,
+window#vmm-preferences,
+window.vmm-window {
+    background-color: transparent;
+}
+
+window#vmm-manager menubar,
+window#vmm-manager toolbar,
+window#vmm-manager treeview,
+window#vmm-manager scrolledwindow,
+window#vmm-vmwindow menubar,
+window#vmm-vmwindow toolbar,
+window#vmm-vmwindow notebook,
+window#vmm-vmwindow treeview,
+window#vmm-vmwindow scrolledwindow {
+    background-color: transparent;
+}
+
+window .navigation-sidebar,
+window placessidebar,
+.sidebar {
+    background-color: transparent;
+}
+
+/* Seamless Transparent Headerbars & Titlebars */
+window headerbar,
+headerbar,
+headerbar:backdrop,
+.titlebar,
+terminal-window headerbar {
+    background-color: transparent;
+    background-image: none;
+    border-bottom: none;
+    box-shadow: none;
+}
+
+/* 100% Transparent Popups, Popovers & Menus */
+popover,
+popover.background,
+popover > contents,
+headerbar popover,
+headerbar popover > contents,
+menu,
+.menu,
+.context-menu,
+.popup {
+    background-color: transparent;
+    background-image: none;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: none;
+}
+
+/* Window Control Traffic Light Buttons: Clean with NO border, box or background */
+headerbar windowcontrols button,
+windowcontrols button,
+button.titlebutton,
+button.close,
+button.minimize,
+button.maximize,
+headerbar windowcontrols button:hover,
+windowcontrols button:hover,
+button.titlebutton:hover,
+button.close:hover,
+button.minimize:hover,
+button.maximize:hover,
+headerbar windowcontrols button:active,
+windowcontrols button:active,
+button.titlebutton:active,
+button.close:active,
+button.minimize:active,
+button.maximize:active {
+    background-color: transparent;
+    border: none;
+    border-color: transparent;
+    box-shadow: none;
+    outline: none;
+}
+
+button {
+    color: @theme_fg_color;
+}
+
+button:not(.flat):not(.suggested-action):not(.destructive-action):not(.titlebutton):not(.close):not(.minimize):not(.maximize) {
+    background-color: rgba(255, 255, 255, 0.08);
+    border: none;
+}
+
+button:hover:not(.flat):not(.titlebutton):not(.close):not(.minimize):not(.maximize) {
+    background-color: rgba(255, 255, 255, 0.14);
+}
+
+/* Text Entries & Inputs */
+entry {
+    background-color: rgba(0, 0, 0, 0.30);
+    color: @theme_fg_color;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+/* Extended GTK 3 Application Support */
+/* GNOME Tweaks */
+window#tweak-tool,
+#tweak-categories,
+#tweak-page,
+.tweak-group,
+notebook.tweak-categories,
+scrolledwindow.tweak-page {
+    background-color: transparent;
+    background-image: none;
+}
+
+/* PulseAudio Volume Control (pavucontrol) */
+window#pavucontrol-window,
+#vbox_playback,
+#vbox_recording,
+#vbox_output,
+#vbox_input,
+#vbox_cards {
+    background-color: transparent;
+    background-image: none;
+}
+
+/* File Roller (Archive Manager) */
+window.file-roller,
+scrolledwindow.fr-window {
+    background-color: transparent;
+    background-image: none;
+}
+
+/* Baobab (Disk Usage Analyzer) */
+window.baobab-window,
+treemap-chart,
+rings-chart {
+    background-color: transparent;
+    background-image: none;
+}

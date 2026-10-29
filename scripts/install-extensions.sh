@@ -167,7 +167,8 @@ if installed_or_present_uuids:
         set_gsettings_list("disabled-extensions", updated_disabled)
 
     if "user-theme@gnome-shell-extensions.gcampax.github.com" in installed_or_present_uuids:
-        run_cmd(["dconf", "write", "/org/gnome/shell/extensions/user-theme/name", "'WhiteSur-glassy'"])
+        theme_name = os.environ.get("WHITESUR_THEME_NAME", "WhiteSur-Glassy-Transparent")
+        run_cmd(["dconf", "write", "/org/gnome/shell/extensions/user-theme/name", f"'{theme_name}'"])
 
 print("Extensions configured and enabled.")
 PYEOF

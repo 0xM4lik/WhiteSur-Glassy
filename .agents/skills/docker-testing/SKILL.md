@@ -41,21 +41,31 @@ podman run --rm --security-opt label=disable -v /home/malik/git/WhiteSur-Glassy:
 
 ### 2. What to Verify in Container Tests
 
-1. **Dependency Check (`--check` and `--help`)**:
+1. **Dependency Check & Non-Interactive Guard (`--check`, `--help`, and missing variant check)**:
    ```bash
    /workspace/install.sh --help
    /workspace/install.sh --check
+   # Must fail when running non-interactively without --transparent or --tinted:
+   ! /workspace/install.sh --theme < /dev/null
    ```
 
-2. **Theme & Libadwaita Installation (`--theme`)**:
+2. **GTK 3 & GTK 4 CSS Parser Validation**:
+   - Load `gtk-3.0/gtk.css`, `gtk-4.0/gtk.css`, and `theme/libadwaita/gtk-WhiteSur-Glassy-*.css` for both `WhiteSur-Glassy-Transparent` and `WhiteSur-Glassy-Tinted` via `Gtk.CssProvider` (`python3-gobject`, `gtk3`, `gtk4`) to ensure zero CSS syntax or property errors.
+
+3. **Dual Theme & Libadwaita Installation (`--theme --transparent` & `--theme --tinted`)**:
    ```bash
-   /workspace/install.sh --theme < /dev/null
+   /workspace/install.sh --theme --transparent < /dev/null
+   /workspace/install.sh --theme --tinted < /dev/null
    ```
-   - Verify theme files exist in **both** `$HOME/.themes/WhiteSur-glassy` and `${XDG_DATA_HOME:-$HOME/.local/share}/themes/WhiteSur-glassy`.
-   - Verify `$HOME/.config/gtk-4.0/gtk.css` and `$HOME/.config/gtk-4.0/gtk-dark.css` are **relative** symlinks (`readlink` equals `gtk-WhiteSur-glassy.css`, not an absolute `/root/...` or `/home/...` path).
+   - Verify **both** `WhiteSur-Glassy-Transparent` and `WhiteSur-Glassy-Tinted` exist in `$HOME/.themes/` and `${XDG_DATA_HOME:-$HOME/.local/share}/themes/`.
+   - Verify **both** `gtk-WhiteSur-Glassy-Transparent.css` and `gtk-WhiteSur-Glassy-Tinted.css` exist in `$HOME/.config/gtk-4.0/`.
+   - Verify `$HOME/.config/gtk-4.0/gtk.css` and `$HOME/.config/gtk-4.0/gtk-dark.css` are **relative** symlinks pointing to `gtk-WhiteSur-Glassy-Transparent.css` (when `--transparent`) or `gtk-WhiteSur-Glassy-Tinted.css` (when `--tinted`).
    - Verify `$HOME/.config/gtk-4.0/windows-assets` and `$HOME/.config/gtk-4.0/gtk-WhiteSur-Dark.css` exist.
 
-3. **Flatpak Sandbox Simulation**:
+4. **Interactive Prompt Selection**:
+   - Pipe choice `1` (Transparent) and choice `2` (Tinted) into `/workspace/install.sh` (without flags) to verify the initial theme selection menu works end-to-end.
+
+5. **Flatpak Sandbox Simulation**:
    - Check that `~/.local/share/flatpak/overrides/global` (or `flatpak override --user --show`) includes:
      - `xdg-config/gtk-4.0:ro`
      - `xdg-config/gtk-3.0:ro`
@@ -63,11 +73,11 @@ podman run --rm --security-opt label=disable -v /home/malik/git/WhiteSur-Glassy:
      - `~/.themes:ro`
      - `xdg-data/icons:ro`
      - `~/.icons:ro`
-     - `GTK_THEME=WhiteSur-glassy`
+     - `GTK_THEME=WhiteSur-Glassy-Transparent` (or `WhiteSur-Glassy-Tinted`)
    - Simulate Flatpak's `xdg-config/gtk-4.0` bind mount by moving `$HOME/.config/gtk-4.0` to `/tmp/flatpak-app-config/gtk-4.0` (so `$HOME/.config/gtk-4.0` no longer exists at its original path) and confirming that `/tmp/flatpak-app-config/gtk-4.0/gtk.css` and `gtk-dark.css` still resolve cleanly and are readable.
 
-4. **Uninstallation & Backup Restoration (`uninstall.sh`)**:
+6. **Uninstallation & Backup Restoration (`uninstall.sh`)**:
    - Create dummy pre-existing files (e.g. `~/.config/gtk-4.0/gtk.css` before running `install.sh`) to verify backup creation (`gtk.css.bak`) and restoration on `uninstall.sh`.
    - Run `/workspace/uninstall.sh < /dev/null`.
-   - Verify `$HOME/.themes/WhiteSur-glassy` and `$HOME/.local/share/themes/WhiteSur-glassy` are removed.
+   - Verify `WhiteSur-Glassy-Transparent` and `WhiteSur-Glassy-Tinted` are removed from `$HOME/.themes/` and `$HOME/.local/share/themes/`.
    - Verify Flatpak overrides in `~/.local/share/flatpak/overrides/global` have removed the theme filesystem/env entries.

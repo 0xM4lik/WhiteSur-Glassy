@@ -14,9 +14,11 @@ echo "Uninstalling WhiteSur-Glassy..."
 if command -v gsettings >/dev/null 2>&1; then
     echo "Reverting GTK and icon themes to default..."
     CURRENT_THEME=$(gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null || echo "")
-    if [ "$CURRENT_THEME" = "'WhiteSur-glassy'" ]; then
-        gsettings set org.gnome.desktop.interface gtk-theme "Adwaita" 2>/dev/null || true
-    fi
+    case "$CURRENT_THEME" in
+        "'WhiteSur-glassy'"|"'WhiteSur-Glassy-Transparent'"|"'WhiteSur-Glassy-Tinted'")
+            gsettings set org.gnome.desktop.interface gtk-theme "Adwaita" 2>/dev/null || true
+            ;;
+    esac
 
     CURRENT_ICONS=$(gsettings get org.gnome.desktop.interface icon-theme 2>/dev/null || echo "")
     if [ "$CURRENT_ICONS" = "'WhiteSur'" ]; then
@@ -34,14 +36,16 @@ if command -v dconf >/dev/null 2>&1; then
 fi
 
 # 3. Remove GTK theme files
-if [ -d "$DEST_THEMES_DIR/WhiteSur-glassy" ]; then
-    echo "Removing $DEST_THEMES_DIR/WhiteSur-glassy..."
-    rm -rf "$DEST_THEMES_DIR/WhiteSur-glassy"
-fi
-if [ -d "$XDG_THEMES_DIR/WhiteSur-glassy" ]; then
-    echo "Removing $XDG_THEMES_DIR/WhiteSur-glassy..."
-    rm -rf "$XDG_THEMES_DIR/WhiteSur-glassy"
-fi
+for tname in "WhiteSur-Glassy-Transparent" "WhiteSur-Glassy-Tinted" "WhiteSur-glassy"; do
+    if [ -d "$DEST_THEMES_DIR/$tname" ]; then
+        echo "Removing $DEST_THEMES_DIR/$tname..."
+        rm -rf "$DEST_THEMES_DIR/$tname"
+    fi
+    if [ -d "$XDG_THEMES_DIR/$tname" ]; then
+        echo "Removing $XDG_THEMES_DIR/$tname..."
+        rm -rf "$XDG_THEMES_DIR/$tname"
+    fi
+done
 
 # 4. Remove Libadwaita overrides and restore backups
 if [ -f "$LIBADWAITA_DIR/setup-libadwaita.sh" ]; then
