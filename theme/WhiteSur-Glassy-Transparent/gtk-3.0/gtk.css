@@ -116,10 +116,13 @@ window placessidebar,
 
 /* Seamless Transparent Headerbars & Titlebars */
 window headerbar,
+window headerbar:backdrop,
 headerbar,
 headerbar:backdrop,
 .titlebar,
-terminal-window headerbar {
+.titlebar:backdrop,
+terminal-window headerbar,
+terminal-window headerbar:backdrop {
     background-color: transparent;
     background-image: none;
     border-bottom: none;
@@ -160,7 +163,13 @@ windowcontrols button:active,
 button.titlebutton:active,
 button.close:active,
 button.minimize:active,
-button.maximize:active {
+button.maximize:active,
+headerbar windowcontrols button:backdrop,
+windowcontrols button:backdrop,
+button.titlebutton:backdrop,
+button.close:backdrop,
+button.minimize:backdrop,
+button.maximize:backdrop {
     background-color: transparent;
     border: none;
     border-color: transparent;
@@ -189,6 +198,23 @@ entry {
 }
 
 /* Extended GTK 3 Application Support */
+/* GNOME Disks (gnome-disk-utility) */
+window.disks-window,
+window#disks-window,
+.disks-window,
+disks-stack,
+disks-empty-state-box,
+disks-devtab,
+volume-grid,
+gduvolumegrid,
+.disk-volume-element,
+.drive-element,
+box.drive-box,
+box.volume-box {
+    background-color: transparent;
+    background-image: none;
+}
+
 /* GNOME Tweaks */
 window#tweak-tool,
 #tweak-categories,

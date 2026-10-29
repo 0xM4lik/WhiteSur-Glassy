@@ -89,6 +89,25 @@ columnview.nautilus-list-view,
     background-image: none;
 }
 
+/* Nautilus Pathbar Active Buttons */
+pathbar > button:active,
+pathbar > button:checked {
+    background-color: rgba(255, 255, 255, 0.20);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Transparent Searchbars across all Libadwaita / GTK4 apps */
+searchbar,
+searchbar > revealer,
+searchbar > revealer > box,
+window.background.csd searchbar > revealer > box,
+.top-bar searchbar,
+.top-bar searchbar > revealer > box {
+    background-color: transparent;
+    background-image: none;
+}
+
 /* GNOME Calculator Translucent Canvas & Display */
 .card.display-container,
 .card.bit-panel,
@@ -223,6 +242,23 @@ window .navigation-sidebar,
 window placessidebar,
 window placessidebar list {
     background-color: @sidebar_bg_color;
+}
+
+/* Inner Panes & Bottom Bars remain transparent to prevent nested opacity stacking */
+.sidebar-pane,
+.sidebar-pane:backdrop,
+.content-pane .sidebar-pane,
+.content-pane .sidebar-pane:backdrop,
+.sidebar-pane .content-pane,
+.sidebar-pane .content-pane:backdrop,
+toolbarview > .bottom-bar,
+toolbarview > .bottom-bar:backdrop,
+notebook > header,
+.frameheader.header:not(.vertical),
+.frameheader.header:not(.vertical):backdrop {
+    background-color: transparent;
+    background-image: none;
+    box-shadow: none;
 }
 
 /* Seamless Transparent Headerbars & Titlebars across ALL applications (focused & backdrop) */
@@ -427,6 +463,23 @@ window headerbar popover > arrow,
     box-shadow: none;
 }
 
+/* Modal Sheets & Dialogs: Single layer of frosted glass without nested opacity stacking */
+dialog-host > dialog.background,
+dialog-host > dialog.background sheet,
+floating-sheet > dimming,
+floating-sheet > sheet,
+window.dialog,
+window.dialog.message.background {
+    background-color: transparent;
+    background-image: none;
+    box-shadow: none;
+}
+
+dialog-host > dialog.background sheet,
+floating-sheet > sheet {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
 /* Standard UI Buttons */
 button {
     color: @window_fg_color;
@@ -503,6 +556,8 @@ entry {
 /* GNOME Text Editor (org.gnome.TextEditor) */
 window.editor,
 window.editor .editor,
+window.org-gnome-TextEditor,
+.org-gnome-TextEditor,
 window.editor textview,
 window.editor textview text,
 window.editor gtksourceview,
@@ -522,6 +577,15 @@ textview.editor text {
     background-image: none;
 }
 
+/* GNOME Calculator (org.gnome.Calculator) */
+display-scrolled,
+.display-scrolled,
+math-display,
+.math-display {
+    background-color: transparent;
+    background-image: none;
+}
+
 /* GNOME Calendar (org.gnome.Calendar) */
 window.calendar,
 window.calendar-window,
@@ -530,10 +594,13 @@ calendar > grid,
 calendar-view,
 gcal-month-view,
 gcal-month-cell,
+gcal-month-view-row,
 gcal-week-view,
+gcal-week-grid,
 gcal-week-header,
 gcal-day-view,
 gcal-agenda-view,
+gcal-date-chooser-day,
 .month-view,
 .week-view,
 .day-view,
@@ -547,8 +614,11 @@ gcal-agenda-view,
 /* GNOME System Monitor (gnome-system-monitor) */
 window.system-monitor,
 load-graph,
+loadgraph,
+gsm-graph,
 gsm-load-graph,
 box.graph-box,
+.graph-box,
 scrolledwindow.procs-page,
 scrolledwindow.resources-page,
 scrolledwindow.disks-page {
@@ -558,6 +628,13 @@ scrolledwindow.disks-page {
 
 /* GNOME Disks (gnome-disk-utility) */
 window.disks-window,
+window#disks-window,
+.disks-window,
+disks-stack,
+disks-empty-state-box,
+disks-devtab,
+volume-grid,
+gduvolumegrid,
 .disk-volume-element,
 .drive-element,
 box.drive-box,
@@ -573,14 +650,24 @@ weekly-forecast-frame,
 .forecast-card,
 clock-card,
 alarm-card,
+alarm-row,
+timer-row,
 stopwatch-view,
+stopwatch-panel,
 timer-view,
+timer-panel,
 clocks-window {
     background-color: transparent;
     background-image: none;
 }
 
 /* GNOME Contacts, Bottles & Pika Backup */
+contacts-main-window,
+contacts-contact-sheet,
+contacts-contact-pane,
+contacts-contact-editor,
+contacts-contact-list,
+contacts-sheet,
 contact-sheet,
 contacts-avatar,
 contact-entry,
@@ -597,8 +684,43 @@ evview,
 evdocumentview,
 evsidebar,
 scrolledwindow.ev-view,
+ppsview,
+pps-view,
+.pps-view,
+document-view,
+.document-view,
+papers-view,
+.papers-view,
+loupe,
 loupe-image-view,
+.image-view,
+image-view,
+sliding-view,
+properties-view,
 .player-bar {
+    background-color: transparent;
+    background-image: none;
+}
+
+/* Ported Modern GTK 4 / Libadwaita Applications (Tweaks, Pavucontrol, File Roller, Baobab) */
+window#tweak-tool,
+window.tweak-tool,
+.tweak-group,
+window.IdeTweaksWindow,
+window#pavucontrol-window,
+window.pavucontrol-window,
+#vbox_playback,
+#vbox_recording,
+#vbox_output,
+#vbox_input,
+#vbox_cards,
+window.file-roller,
+.file-roller,
+scrolledwindow.fr-window,
+window.baobab-window,
+.baobab-window,
+treemap-chart,
+rings-chart {
     background-color: transparent;
     background-image: none;
 }

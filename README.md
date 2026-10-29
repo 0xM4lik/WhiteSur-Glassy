@@ -15,7 +15,9 @@
 
 ---
 
-<img src="assets/screenshots/preview.png" alt="WhiteSur-Glassy Preview" width="85%">
+<img src="assets/screenshots/terminal-slider.svg" alt="WhiteSur-Glassy Terminal Transparent vs Tinted Comparison Slider" width="100%">
+
+<p align="center"><sub>Interactive comparison: slide between <b>WhiteSur-Glassy-Transparent</b> (100% clear) and <b>WhiteSur-Glassy-Tinted</b> (75% frosted glass).</sub></p>
 
 </div>
 
