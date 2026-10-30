@@ -108,6 +108,36 @@ if [ -d "$DEST_ICONS_DIR/WhiteSur" ]; then
     esac
 fi
 
+# 8b. Clean up installed Linux Dynamic Wallpapers if present
+if [ -d "/usr/share/backgrounds/Dynamic_Wallpapers" ]; then
+    read -p "Remove installed Linux Dynamic Wallpapers (/usr/share/backgrounds/Dynamic_Wallpapers)? [y/N]: " ans_wallpapers || true
+    case "$ans_wallpapers" in
+        [yY]*)
+            echo "Removing Linux Dynamic Wallpapers..."
+            if [ "$EUID" -eq 0 ]; then
+                rm -rf /usr/share/backgrounds/Dynamic_Wallpapers
+                if [ -d "/usr/share/gnome-background-properties" ]; then
+                    for xml_file in /usr/share/gnome-background-properties/*.xml; do
+                        if [ -f "$xml_file" ] && grep -q "/usr/share/backgrounds/Dynamic_Wallpapers" "$xml_file" 2>/dev/null; then
+                            rm -f "$xml_file"
+                        fi
+                    done
+                fi
+            elif command -v sudo >/dev/null 2>&1; then
+                sudo rm -rf /usr/share/backgrounds/Dynamic_Wallpapers
+                if [ -d "/usr/share/gnome-background-properties" ]; then
+                    for xml_file in /usr/share/gnome-background-properties/*.xml; do
+                        if [ -f "$xml_file" ] && grep -q "/usr/share/backgrounds/Dynamic_Wallpapers" "$xml_file" 2>/dev/null; then
+                            sudo rm -f "$xml_file"
+                        fi
+                    done
+                fi
+            fi
+            echo "Linux Dynamic Wallpapers removed."
+            ;;
+    esac
+fi
+
 # 9. Clean up extensions installed into ~/.local/share/gnome-shell/extensions
 EXT_LIST=("blur-my-shell@aunetx" "dash-to-dock@micxgx.gmail.com" "logomenu@aryan_k" "user-theme@gnome-shell-extensions.gcampax.github.com")
 FOUND_EXTS=false

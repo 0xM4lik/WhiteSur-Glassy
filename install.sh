@@ -17,6 +17,7 @@ INSTALL_THEME=false
 INSTALL_LIBADWAITA=false
 INSTALL_FLATPAK=false
 INSTALL_ICONS=false
+INSTALL_WALLPAPERS=false
 INSTALL_EXTENSIONS=false
 INSTALL_TERMINAL=false
 INSTALL_CONFIGS=false
@@ -31,6 +32,7 @@ HAS_ROUNDED_BLUR=false
 HAS_DCONF=false
 HAS_FLATPAK=false
 HAS_ICONS=false
+HAS_WALLPAPERS=false
 HAS_PTYXIS=false
 HAS_GNOME_TERM=false
 
@@ -41,6 +43,10 @@ check_tool flatpak && HAS_FLATPAK=true
 
 if [ -d "$HOME/.local/share/icons/WhiteSur" ] || [ -d "/usr/share/icons/WhiteSur" ]; then
     HAS_ICONS=true
+fi
+
+if [ -d "/usr/share/backgrounds/Dynamic_Wallpapers" ]; then
+    HAS_WALLPAPERS=true
 fi
 
 if python3 -c "import gi; gi.require_version('Blur', '1.0'); from gi.repository import Blur" 2>/dev/null; then
@@ -78,6 +84,7 @@ Component Options:
   --theme          Install GTK 3/4 themes, Libadwaita overrides, Flatpak overrides, left-side window buttons, and terminal transparency
   --extensions     Install GNOME extensions (Blur my Shell, Dash to Dock, Logo Menu, User Themes), gnome-rounded-blur, and glassy presets
   --icons          Install WhiteSur icons
+  --wallpapers     Install Linux Dynamic Wallpapers pack for GNOME (~1.7 GB)
   --terminal       Configure terminal transparency to match selected theme (Ptyxis and GNOME Terminal)
   --flatpak        Configure Flatpak overrides (GTK 3/4 theme, Libadwaita, icons)
   --check          Check system dependencies
@@ -112,6 +119,12 @@ print_dependency_status() {
         echo "  - WhiteSur icons: installed"
     else
         echo "  - WhiteSur icons: not installed"
+    fi
+
+    if [ "$HAS_WALLPAPERS" = true ]; then
+        echo "  - Linux Dynamic Wallpapers: installed"
+    else
+        echo "  - Linux Dynamic Wallpapers: not installed (~1.7 GB optional pack)"
     fi
 
     if [ "$HAS_PTYXIS" = true ]; then
@@ -184,6 +197,17 @@ run_interactive_component_prompts() {
             INSTALL_ICONS=true
             ;;
     esac
+
+    if [ "$HAS_WALLPAPERS" = true ]; then
+        read -p "Reinstall Linux Dynamic Wallpapers pack for GNOME (~1.7 GB)? [y/N]: " ans_wallpapers || true
+    else
+        read -p "Install Linux Dynamic Wallpapers pack for GNOME (~1.7 GB)? [y/N]: " ans_wallpapers || true
+    fi
+    case "$ans_wallpapers" in
+        [yY]*)
+            INSTALL_WALLPAPERS=true
+            ;;
+    esac
 }
 
 # Parse command line flags
@@ -226,6 +250,11 @@ if [ $# -gt 0 ]; then
             --icons)
                 HAS_COMPONENT_FLAGS=true
                 INSTALL_ICONS=true
+                shift
+                ;;
+            --wallpapers|--dynamic-wallpapers)
+                HAS_COMPONENT_FLAGS=true
+                INSTALL_WALLPAPERS=true
                 shift
                 ;;
             --extensions)
@@ -332,9 +361,24 @@ if [ "$INSTALL_FLATPAK" = true ]; then
     fi
 
     # If only --flatpak was specified, finish immediately without logout prompt
-    if [ "$INSTALL_THEME" != true ] && [ "$INSTALL_LIBADWAITA" != true ] && [ "$INSTALL_ICONS" != true ] && [ "$INSTALL_EXTENSIONS" != true ] && [ "$INSTALL_TERMINAL" != true ] && [ "$INSTALL_CONFIGS" != true ]; then
+    if [ "$INSTALL_THEME" != true ] && [ "$INSTALL_LIBADWAITA" != true ] && [ "$INSTALL_ICONS" != true ] && [ "$INSTALL_WALLPAPERS" != true ] && [ "$INSTALL_EXTENSIONS" != true ] && [ "$INSTALL_TERMINAL" != true ] && [ "$INSTALL_CONFIGS" != true ]; then
         echo ""
         echo "Flatpak configuration complete! Restart your Flatpak apps to see changes."
+        exit 0
+    fi
+fi
+
+# 3c. Install Linux Dynamic Wallpapers
+if [ "$INSTALL_WALLPAPERS" = true ]; then
+    if [ -f "$SCRIPT_DIR/scripts/install-wallpapers.sh" ]; then
+        bash "$SCRIPT_DIR/scripts/install-wallpapers.sh" --force
+    fi
+
+    # If only --wallpapers was specified, finish immediately without logout prompt
+    if [ "$INSTALL_THEME" != true ] && [ "$INSTALL_LIBADWAITA" != true ] && [ "$INSTALL_ICONS" != true ] && [ "$INSTALL_EXTENSIONS" != true ] && [ "$INSTALL_TERMINAL" != true ] && [ "$INSTALL_CONFIGS" != true ] && [ "$INSTALL_FLATPAK" != true ]; then
+        echo ""
+        echo "Linux Dynamic Wallpapers installation complete!"
+        echo "You can select your dynamic wallpaper from GNOME Settings -> Background."
         exit 0
     fi
 fi
