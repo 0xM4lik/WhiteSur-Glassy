@@ -1,19 +1,20 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "=== [1/10] Installing container test dependencies ==="
+echo "=== [1/11] Installing container test dependencies ==="
 if command -v dnf >/dev/null 2>&1; then
     dnf install -y --setopt=install_weak_deps=False flatpak glib2 dconf python3 python3-gobject gobject-introspection gtk3 gtk4 >/dev/null
 elif command -v apt-get >/dev/null 2>&1; then
     apt-get update -qq && apt-get install -y --no-install-recommends -qq flatpak libglib2.0-bin dconf-cli python3 python3-gi gir1.2-gtk-3.0 gir1.2-gtk-4.0 >/dev/null
 fi
 
-echo "=== [2/10] Verifying shell syntax and --help / --check / non-interactive guard ==="
+echo "=== [2/11] Verifying shell syntax and --help / --check / non-interactive guard ==="
 bash -n /workspace/install.sh
 bash -n /workspace/uninstall.sh
 bash -n /workspace/theme/libadwaita/setup-libadwaita.sh
 bash -n /workspace/scripts/setup-flatpak.sh
 bash -n /workspace/scripts/setup-terminal.sh
+bash -n /workspace/scripts/setup-shell.sh
 bash -n /workspace/scripts/install-extensions.sh
 bash -n /workspace/scripts/install-wallpapers.sh
 
@@ -22,6 +23,7 @@ CHECK_OUT="$(/workspace/install.sh --check)"
 echo "$CHECK_OUT"
 echo "$CHECK_OUT" | grep -q "flatpak: found"
 echo "$CHECK_OUT" | grep -q "Linux Dynamic Wallpapers: not installed"
+echo "$CHECK_OUT" | grep -q "Starship prompt:"
 
 # Non-interactive --theme without --transparent or --tinted must fail cleanly
 if /workspace/install.sh --theme < /dev/null 2>/dev/null; then
@@ -30,7 +32,7 @@ if /workspace/install.sh --theme < /dev/null 2>/dev/null; then
 fi
 echo "Verified non-interactive guard requires --transparent or --tinted."
 
-echo "=== [3/10] Validating GTK 3 and GTK 4 CSS files with Gtk.CssProvider ==="
+echo "=== [3/11] Validating GTK 3 and GTK 4 CSS files with Gtk.CssProvider ==="
 python3 - << 'PYEOF'
 import sys
 import gi
@@ -84,13 +86,13 @@ for path in gtk4_files:
     print(f"GTK4 CSS OK: {path}")
 PYEOF
 
-echo "=== [4/10] Preparing pre-existing gtk.css and custom Flatpak override ==="
+echo "=== [4/11] Preparing pre-existing gtk.css and custom Flatpak override ==="
 mkdir -p "$HOME/.config/gtk-4.0"
 echo "/* pre-existing user css */" > "$HOME/.config/gtk-4.0/gtk.css"
 mkdir -p "$HOME/.local/share/icons/WhiteSur"
 flatpak override --user --env=CUSTOM_USER_VAR=keep_me
 
-echo "=== [5/10] Testing install.sh --theme --transparent inside container ==="
+echo "=== [5/11] Testing install.sh --theme --transparent inside container ==="
 /workspace/install.sh --theme --transparent < /dev/null
 
 # Verify BOTH theme directories are installed
@@ -128,7 +130,7 @@ echo "$OVERRIDE_OUT" | grep -q "GTK_THEME=WhiteSur-Glassy-Transparent"
 echo "$OVERRIDE_OUT" | grep -q "ICON_THEME=WhiteSur"
 echo "$OVERRIDE_OUT" | grep -q "CUSTOM_USER_VAR=keep_me"
 
-echo "=== [6/10] Simulating Flatpak sandbox mount & switching to --tinted ==="
+echo "=== [6/11] Simulating Flatpak sandbox mount & switching to --tinted ==="
 mkdir -p /tmp/flatpak-sandbox/config
 mv "$HOME/.config/gtk-4.0" /tmp/flatpak-sandbox/config/gtk-4.0
 test ! -e "$HOME/.config/gtk-4.0/gtk-WhiteSur-Glassy-Transparent.css"
@@ -142,18 +144,18 @@ test "$(readlink "$HOME/.config/gtk-4.0/gtk-dark.css")" = "gtk-WhiteSur-Glassy-T
 head -n 5 "$HOME/.config/gtk-4.0/gtk.css" | grep -q "rgba(28, 28, 30, 0.75)"
 flatpak override --user --show | grep -q "GTK_THEME=WhiteSur-Glassy-Tinted"
 
-echo "=== [7/10] Testing interactive prompt selection (Option 1: Transparent, Option 2: Tinted) ==="
-# Pipe Option 1 (Transparent), y (install theme), n (icons), n (wallpapers)
-printf "1\ny\nn\nn\n" | /workspace/install.sh
+echo "=== [7/11] Testing interactive prompt selection (Option 1: Transparent, Option 2: Tinted) ==="
+# Pipe Option 1 (Transparent), y (install theme), n (icons), n (shell), n (wallpapers)
+printf "1\ny\nn\nn\nn\n" | /workspace/install.sh
 test "$(readlink "$HOME/.config/gtk-4.0/gtk.css")" = "gtk-WhiteSur-Glassy-Transparent.css"
 flatpak override --user --show | grep -q "GTK_THEME=WhiteSur-Glassy-Transparent"
 
-# Pipe Option 2 (Tinted), y (install theme), n (icons), n (wallpapers)
-printf "2\ny\nn\nn\n" | /workspace/install.sh
+# Pipe Option 2 (Tinted), y (install theme), n (icons), n (shell), n (wallpapers)
+printf "2\ny\nn\nn\nn\n" | /workspace/install.sh
 test "$(readlink "$HOME/.config/gtk-4.0/gtk.css")" = "gtk-WhiteSur-Glassy-Tinted.css"
 flatpak override --user --show | grep -q "GTK_THEME=WhiteSur-Glassy-Tinted"
 
-echo "=== [8/10] Running uninstall.sh inside container ==="
+echo "=== [8/11] Running uninstall.sh inside container ==="
 /workspace/uninstall.sh < /dev/null
 
 # Verify both theme directories removed
@@ -181,7 +183,7 @@ echo "$OVERRIDE_AFTER" | grep -q "CUSTOM_USER_VAR=keep_me"
 ! echo "$OVERRIDE_AFTER" | grep -q "xdg-config/gtk-4.0"
 ! echo "$OVERRIDE_AFTER" | grep -q "xdg-data/themes"
 
-echo "=== [9/10] Testing standalone install.sh --flatpak ==="
+echo "=== [9/11] Testing standalone install.sh --flatpak ==="
 mkdir -p "$HOME/.config/gtk-4.0"
 touch "$HOME/.config/gtk-4.0/gtk-WhiteSur-Glassy-Tinted.css"
 ln -sf "$HOME/.config/gtk-4.0/gtk-WhiteSur-Glassy-Tinted.css" "$HOME/.config/gtk-4.0/gtk.css"
@@ -195,7 +197,7 @@ test "$(readlink "$HOME/.config/gtk-4.0/gtk.css")" = "gtk-WhiteSur-Glassy-Tinted
 flatpak override --user --show | grep -q "GTK_THEME=WhiteSur-Glassy-Tinted"
 flatpak override --user --show | grep -q "xdg-config/gtk-4.0:ro"
 
-echo "=== [10/10] Testing standalone install.sh --wallpapers and uninstall ==="
+echo "=== [10/11] Testing standalone install.sh --wallpapers and uninstall ==="
 MOCK_WP_SRC="/tmp/mock-dynamic-wallpapers"
 mkdir -p "$MOCK_WP_SRC/Dynamic_Wallpapers/TestTheme" "$MOCK_WP_SRC/xml"
 touch "$MOCK_WP_SRC/Dynamic_Wallpapers/TestTheme/1.jpg"
@@ -241,5 +243,24 @@ test -f "/usr/share/gnome-background-properties/TestTheme.xml"
 printf "y\ny\n" | /workspace/uninstall.sh
 test ! -d "/usr/share/backgrounds/Dynamic_Wallpapers"
 test ! -f "/usr/share/gnome-background-properties/TestTheme.xml"
+
+echo "=== [11/11] Testing standalone install.sh --shell and uninstall restoration ==="
+echo "# custom user bashrc" > "$HOME/.bashrc"
+SHELL_INSTALL_OUT="$(/workspace/install.sh --shell < /dev/null)"
+echo "$SHELL_INSTALL_OUT"
+echo "$SHELL_INSTALL_OUT" | grep -q "Shell configuration complete"
+
+# Verify .bashrc was updated with Starship prompt support
+grep -q "starship init bash" "$HOME/.bashrc"
+
+# Verify backup was created with the previous custom bashrc
+LATEST_BAK="$(ls -t "$HOME"/.bashrc.pre-whitesur-*.bak 2>/dev/null | head -n 1)"
+test -f "$LATEST_BAK"
+grep -q "custom user bashrc" "$LATEST_BAK"
+
+# Verify uninstall restores the backup
+/workspace/uninstall.sh < /dev/null
+grep -q "custom user bashrc" "$HOME/.bashrc"
+! grep -q "starship init bash" "$HOME/.bashrc"
 
 echo "=== ALL CONTAINER TESTS PASSED SUCCESSFULLY ==="

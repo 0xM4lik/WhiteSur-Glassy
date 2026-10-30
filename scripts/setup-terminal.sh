@@ -10,7 +10,7 @@ case "$VARIANT" in
         DESC="75% tinted"
         ;;
     transparent|WhiteSur-Glassy-Transparent|*)
-        PTYXIS_OPACITY="1.0"
+        PTYXIS_OPACITY="0.0"
         GNOME_TERM_TRANSPARENCY="100"
         DESC="100% transparent"
         ;;

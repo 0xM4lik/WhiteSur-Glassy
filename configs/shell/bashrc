@@ -5,11 +5,16 @@
 # Sourcing system global definitions
 if [ -f /etc/bashrc ]; then
     . /etc/bashrc
+elif [ -f /etc/bash.bashrc ]; then
+    . /etc/bash.bashrc
 fi
 
 # Ensure user binary paths are available in PATH
-if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
-    export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+    export PATH="$HOME/.local/bin:$PATH"
+fi
+if [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
+    export PATH="$HOME/bin:$PATH"
 fi
 
 # User-specific modular aliases and functions
@@ -29,6 +34,8 @@ unset VIRTUAL_ENV_PROMPT
 # Starship cross-shell prompt (https://starship.rs/)
 if command -v starship >/dev/null 2>&1; then
     eval "$(starship init bash)"
+elif [ -x "$HOME/.local/bin/starship" ]; then
+    eval "$("$HOME/.local/bin/starship" init bash)"
 fi
 
 # Handy terminal aliases

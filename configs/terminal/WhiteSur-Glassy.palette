@@ -5,7 +5,7 @@ UseSystemAccent=true
 
 [Light]
 Foreground=#1d1d20
-Background=rgba(0,0,0,0)
+Background=#ffffff
 TitlebarBackground=rgba(0,0,0,0)
 TitlebarForeground=#333333
 Cursor=#1d1d20
@@ -28,7 +28,7 @@ Color15=#ffffff
 
 [Dark]
 Foreground=#ffffff
-Background=rgba(0,0,0,0)
+Background=#1c1c1f
 TitlebarBackground=rgba(0,0,0,0)
 TitlebarForeground=#ffffff
 Cursor=#ffffff

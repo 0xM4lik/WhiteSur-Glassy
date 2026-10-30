@@ -15,9 +15,11 @@
 
 ---
 
-<img src="assets/screenshots/terminal-slider.svg" alt="WhiteSur-Glassy Terminal Transparent vs Tinted Comparison Slider" width="100%">
+<a href="theme-slider.html">
+  <img src="assets/screenshots/preview.png" alt="WhiteSur-Glassy Terminal Transparent vs Tinted Comparison Slider" width="100%">
+</a>
 
-<p align="center"><sub>Interactive comparison: slide between <b>WhiteSur-Glassy-Transparent</b> (100% clear) and <b>WhiteSur-Glassy-Tinted</b> (75% frosted glass).</sub></p>
+<p align="center"><sub>Live full desktop capture: <b>WhiteSur-Glassy-Transparent</b> (100% clear glass, left) vs. <b>WhiteSur-Glassy-Tinted</b> (75% dark frosted glass, right) showing GNOME Shell with Blur my Shell, Dash to Dock, Logo Menu, and Ptyxis running fastfetch on macOS Big Sur backdrop. <a href="theme-slider.html">Open interactive comparison slider &rarr;</a></sub></p>
 
 </div>
 
@@ -31,6 +33,7 @@ WhiteSur-Glassy is a GTK and GNOME Shell theme designed for desktop background b
 * **macOS traffic light buttons.** Left-aligned close, minimize, and maximize buttons across GTK 3, GTK 4, and Libadwaita.
 * **Flatpak override support.** Automatically configures filesystem bind mounts and environment variables for Flatpak applications.
 * **Terminal transparency.** Syncs terminal opacity in Ptyxis and GNOME Terminal with the chosen theme.
+* **Shell configuration.** Clean `.bashrc` template with [Starship](https://starship.rs/) prompt integration and fastfetch support.
 * **One-command extension setup.** Installs Blur my Shell, dynamic rounded blur, Dash to Dock, Logo Menu, and recommended presets.
 
 ## Why WhiteSur-Glassy
@@ -106,6 +109,12 @@ Configure terminal transparency:
 
 ```bash
 ./install.sh --terminal --transparent
+```
+
+Install shell configuration (.bashrc and Starship prompt):
+
+```bash
+./install.sh --shell
 ```
 
 ## Supported applications

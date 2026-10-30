@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhiteSur-Glassy: Live Terminal Theme Comparison Slider</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --border: rgba(255, 255, 255, 0.12);
+      --text: #f0f6fc;
+      --text-muted: #8b949e;
+      --accent-green: #34c759;
+      --accent-blue: #0a84ff;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+      max-width: 800px;
+    }
+    .header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .badge-bar {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+    }
+    .dot-green {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+    }
+    .dot-blue {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-blue);
+      box-shadow: 0 0 8px var(--accent-blue);
+    }
+
+    /* Slider Container */
+    .slider-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      width: 100%;
+      max-width: 1100px;
+    }
+    .slider-viewport {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1400 / 900;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: ew-resize;
+      user-select: none;
+      -webkit-user-select: none;
+      background: #000;
+    }
+    .slider-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+    }
+    .layer-tinted {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      clip-path: polygon(var(--split, 50%) 0, 100% 0, 100% 100%, var(--split, 50%) 100%);
+    }
+
+    /* Divider line and handle */
+    .slider-line {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: var(--split, 50%);
+      width: 3px;
+      background: rgba(255, 255, 255, 0.95);
+      transform: translateX(-50%);
+      pointer-events: none;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+      z-index: 20;
+    }
+    .slider-knob {
+      position: absolute;
+      top: 50%;
+      left: var(--split, 50%);
+      transform: translate(-50%, -50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(28, 28, 30, 0.92);
+      border: 2px solid #ffffff;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 21;
+    }
+    .slider-knob svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: #ffffff;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Badges floating on preview */
+    .view-badge {
+      position: absolute;
+      top: 14px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      background: rgba(20, 20, 22, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 12px;
+      font-weight: 600;
+      z-index: 15;
+      pointer-events: none;
+    }
+    .badge-left {
+      left: 14px;
+      color: #7ee787;
+      border-color: rgba(52, 199, 89, 0.35);
+    }
+    .badge-right {
+      right: 14px;
+      color: #79c0ff;
+      border-color: rgba(10, 132, 255, 0.35);
+    }
+
+    /* Controls Bar */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .btn-group {
+      display: flex;
+      gap: 8px;
+    }
+    button.btn {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    button.btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+    button.btn.active {
+      background: rgba(10, 132, 255, 0.25);
+      border-color: var(--accent-blue);
+      color: #ffffff;
+    }
+    .hint {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>WhiteSur-Glassy: Live Desktop & Terminal Theme Comparison</h1>
+    <p>Authentic full GNOME 50 desktop render with Blur my Shell, Dash to Dock, Logo Menu, and Ptyxis running fastfetch on macOS Big Sur backdrop.<br>
+       Drag the handle horizontally to slide between WhiteSur-Glassy-Transparent (100% Glass) and WhiteSur-Glassy-Tinted (75% Smoked Glass).</p>
+    <div class="badge-bar">
+      <div class="pill"><span class="dot-green"></span> WhiteSur-Glassy-Transparent (100% Glass)</div>
+      <div class="pill"><span class="dot-blue"></span> WhiteSur-Glassy-Tinted (75% Dark Frosted)</div>
+    </div>
+  </div>
+
+  <div class="slider-card">
+    <div id="viewport" class="slider-viewport" style="--split: 50%;">
+      <!-- Base Layer: 100% Transparent -->
+      <img src="assets/screenshots/transparent.png" alt="WhiteSur-Glassy-Transparent Live Terminal" class="slider-image">
+
+      <!-- Top Layer: 75% Tinted (Clipped) -->
+      <div class="layer-tinted">
+        <img src="assets/screenshots/tinted.png" alt="WhiteSur-Glassy-Tinted Live Terminal" class="slider-image">
+      </div>
+
+      <!-- Live Badges -->
+      <div class="view-badge badge-left">◀ WhiteSur-Glassy-Transparent (100%)</div>
+      <div class="view-badge badge-right">WhiteSur-Glassy-Tinted (75%) ▶</div>
+
+      <!-- Draggable Line & Knob -->
+      <div class="slider-line"></div>
+      <div class="slider-knob">
+        <svg viewBox="0 0 24 24">
+          <polyline points="15 18 9 12 15 6"></polyline>
+          <polyline points="9 18 3 12 9 6" style="display:none"></polyline>
+          <polyline points="9 18 3 12 9 6" transform="translate(12, 0) scale(-1, 1)"></polyline>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Quick preset controls -->
+    <div class="controls-bar">
+      <div class="btn-group">
+        <button class="btn" onclick="setPreset(0)">100% Transparent</button>
+        <button class="btn" onclick="setPreset(25)">25% Split</button>
+        <button class="btn active" id="btn-50" onclick="setPreset(50)">50% (Split)</button>
+        <button class="btn" onclick="setPreset(75)">75% Split</button>
+        <button class="btn" onclick="setPreset(100)">100% Tinted</button>
+      </div>
+      <div class="btn-group">
+        <button class="btn" id="btn-anim" onclick="toggleAutoPlay()">▶ Auto Scan</button>
+      </div>
+      <span class="hint">Click or drag anywhere across the image to compare</span>
+    </div>
+  </div>
+
+  <script>
+    const viewport = document.getElementById('viewport');
+    let isDragging = false;
+    let animId = null;
+    let animDir = 1;
+    let currentPos = 50;
+
+    function setPosition(percent) {
+      currentPos = Math.max(0, Math.min(100, percent));
+      viewport.style.setProperty('--split', currentPos + '%');
+    }
+
+    function setPreset(percent) {
+      stopAutoPlay();
+      setPosition(percent);
+    }
+
+    function onPointerMove(e) {
+      if (!isDragging && e.buttons !== 1) return;
+      stopAutoPlay();
+      const rect = viewport.getBoundingClientRect();
+      const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+      if (clientX !== undefined) {
+        const x = clientX - rect.left;
+        setPosition((x / rect.width) * 100);
+      }
+    }
+
+    viewport.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      onPointerMove(e);
+    });
+    window.addEventListener('mouseup', () => { isDragging = false; });
+    window.addEventListener('mousemove', onPointerMove);
+
+    viewport.addEventListener('touchstart', (e) => {
+      isDragging = true;
+      onPointerMove(e);
+    }, { passive: true });
+    window.addEventListener('touchend', () => { isDragging = false; });
+    window.addEventListener('touchmove', onPointerMove, { passive: true });
+
+    // Keyboard navigation (Left / Right arrow keys)
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        stopAutoPlay();
+        setPosition(currentPos - 5);
+      } else if (e.key === 'ArrowRight') {
+        stopAutoPlay();
+        setPosition(currentPos + 5);
+      }
+    });
+
+    function toggleAutoPlay() {
+      if (animId) {
+        stopAutoPlay();
+      } else {
+        startAutoPlay();
+      }
+    }
+
+    function startAutoPlay() {
+      const btn = document.getElementById('btn-anim');
+      btn.innerText = '⏸ Pause Scan';
+      btn.classList.add('active');
+      function step() {
+        currentPos += 0.4 * animDir;
+        if (currentPos >= 90) {
+          currentPos = 90;
+          animDir = -1;
+        } else if (currentPos <= 10) {
+          currentPos = 10;
+          animDir = 1;
+        }
+        viewport.style.setProperty('--split', currentPos.toFixed(2) + '%');
+        animId = requestAnimationFrame(step);
+      }
+      animId = requestAnimationFrame(step);
+    }
+
+    function stopAutoPlay() {
+      if (animId) {
+        cancelAnimationFrame(animId);
+        animId = null;
+        const btn = document.getElementById('btn-anim');
+        if (btn) {
+          btn.innerText = '▶ Auto Scan';
+          btn.classList.remove('active');
+        }
+      }
+    }
+  </script>
+</body>
+</html>

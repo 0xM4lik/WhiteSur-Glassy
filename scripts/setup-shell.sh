@@ -17,9 +17,9 @@ if ! command -v starship >/dev/null 2>&1 && [ ! -f "$HOME/.local/bin/starship" ]
     echo "Installing Starship prompt..."
     mkdir -p "$HOME/.local/bin"
     if command -v curl >/dev/null 2>&1; then
-        curl -sS https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin"
+        curl -sS https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin" || echo "Warning: Failed to install Starship via curl."
     elif command -v wget >/dev/null 2>&1; then
-        wget -qO- https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin"
+        wget -qO- https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin" || echo "Warning: Failed to install Starship via wget."
     else
         echo "Could not download Starship automatically (curl or wget required)."
     fi

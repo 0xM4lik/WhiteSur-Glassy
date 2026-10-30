@@ -20,6 +20,7 @@ INSTALL_ICONS=false
 INSTALL_WALLPAPERS=false
 INSTALL_EXTENSIONS=false
 INSTALL_TERMINAL=false
+INSTALL_SHELL=false
 INSTALL_CONFIGS=false
 
 check_tool() {
@@ -33,6 +34,7 @@ HAS_DCONF=false
 HAS_FLATPAK=false
 HAS_ICONS=false
 HAS_WALLPAPERS=false
+HAS_STARSHIP=false
 HAS_PTYXIS=false
 HAS_GNOME_TERM=false
 
@@ -40,6 +42,10 @@ check_tool python3 && HAS_PYTHON=true
 check_tool gnome-extensions && HAS_GNOME_EXT=true
 check_tool dconf && HAS_DCONF=true
 check_tool flatpak && HAS_FLATPAK=true
+
+if check_tool starship || [ -f "$HOME/.local/bin/starship" ]; then
+    HAS_STARSHIP=true
+fi
 
 if [ -d "$HOME/.local/share/icons/WhiteSur" ] || [ -d "/usr/share/icons/WhiteSur" ]; then
     HAS_ICONS=true
@@ -80,12 +86,13 @@ Theme Variant Options:
   --tinted         Select WhiteSur-Glassy-Tinted (75% translucent windows with dark glass tint)
 
 Component Options:
-  --all            Install everything (GTK/Libadwaita themes, window buttons, Flatpak overrides, terminal transparency, extensions & presets, icons)
+  --all            Install everything (GTK/Libadwaita themes, window buttons, Flatpak overrides, terminal transparency, extensions & presets, icons, dynamic wallpapers, shell config)
   --theme          Install GTK 3/4 themes, Libadwaita overrides, Flatpak overrides, left-side window buttons, and terminal transparency
   --extensions     Install GNOME extensions (Blur my Shell, Dash to Dock, Logo Menu, User Themes), gnome-rounded-blur, and glassy presets
   --icons          Install WhiteSur icons
   --wallpapers     Install Linux Dynamic Wallpapers pack for GNOME (~1.7 GB)
   --terminal       Configure terminal transparency to match selected theme (Ptyxis and GNOME Terminal)
+  --shell          Install shell configuration (.bashrc with Starship prompt)
   --flatpak        Configure Flatpak overrides (GTK 3/4 theme, Libadwaita, icons)
   --check          Check system dependencies
   --help, -h       Show this help message
@@ -125,6 +132,12 @@ print_dependency_status() {
         echo "  - Linux Dynamic Wallpapers: installed"
     else
         echo "  - Linux Dynamic Wallpapers: not installed (~1.7 GB optional pack)"
+    fi
+
+    if [ "$HAS_STARSHIP" = true ]; then
+        echo "  - Starship prompt: installed"
+    else
+        echo "  - Starship prompt: not installed (installed automatically if shell config is selected)"
     fi
 
     if [ "$HAS_PTYXIS" = true ]; then
@@ -198,6 +211,13 @@ run_interactive_component_prompts() {
             ;;
     esac
 
+    read -p "Install shell config (.bashrc with Starship prompt)? [y/N]: " ans_shell || true
+    case "$ans_shell" in
+        [yY]*)
+            INSTALL_SHELL=true
+            ;;
+    esac
+
     if [ "$HAS_WALLPAPERS" = true ]; then
         read -p "Reinstall Linux Dynamic Wallpapers pack for GNOME (~1.7 GB)? [y/N]: " ans_wallpapers || true
     else
@@ -233,6 +253,7 @@ if [ $# -gt 0 ]; then
                 INSTALL_EXTENSIONS=true
                 INSTALL_CONFIGS=true
                 INSTALL_ICONS=true
+                INSTALL_SHELL=true
                 shift
                 ;;
             --theme)
@@ -266,6 +287,11 @@ if [ $# -gt 0 ]; then
             --terminal)
                 HAS_COMPONENT_FLAGS=true
                 INSTALL_TERMINAL=true
+                shift
+                ;;
+            --shell)
+                HAS_COMPONENT_FLAGS=true
+                INSTALL_SHELL=true
                 shift
                 ;;
             --check)
@@ -361,7 +387,7 @@ if [ "$INSTALL_FLATPAK" = true ]; then
     fi
 
     # If only --flatpak was specified, finish immediately without logout prompt
-    if [ "$INSTALL_THEME" != true ] && [ "$INSTALL_LIBADWAITA" != true ] && [ "$INSTALL_ICONS" != true ] && [ "$INSTALL_WALLPAPERS" != true ] && [ "$INSTALL_EXTENSIONS" != true ] && [ "$INSTALL_TERMINAL" != true ] && [ "$INSTALL_CONFIGS" != true ]; then
+    if [ "$INSTALL_THEME" != true ] && [ "$INSTALL_LIBADWAITA" != true ] && [ "$INSTALL_ICONS" != true ] && [ "$INSTALL_WALLPAPERS" != true ] && [ "$INSTALL_EXTENSIONS" != true ] && [ "$INSTALL_TERMINAL" != true ] && [ "$INSTALL_CONFIGS" != true ] && [ "$INSTALL_SHELL" != true ]; then
         echo ""
         echo "Flatpak configuration complete! Restart your Flatpak apps to see changes."
         exit 0
@@ -375,7 +401,7 @@ if [ "$INSTALL_WALLPAPERS" = true ]; then
     fi
 
     # If only --wallpapers was specified, finish immediately without logout prompt
-    if [ "$INSTALL_THEME" != true ] && [ "$INSTALL_LIBADWAITA" != true ] && [ "$INSTALL_ICONS" != true ] && [ "$INSTALL_EXTENSIONS" != true ] && [ "$INSTALL_TERMINAL" != true ] && [ "$INSTALL_CONFIGS" != true ] && [ "$INSTALL_FLATPAK" != true ]; then
+    if [ "$INSTALL_THEME" != true ] && [ "$INSTALL_LIBADWAITA" != true ] && [ "$INSTALL_ICONS" != true ] && [ "$INSTALL_EXTENSIONS" != true ] && [ "$INSTALL_TERMINAL" != true ] && [ "$INSTALL_CONFIGS" != true ] && [ "$INSTALL_FLATPAK" != true ] && [ "$INSTALL_SHELL" != true ]; then
         echo ""
         echo "Linux Dynamic Wallpapers installation complete!"
         echo "You can select your dynamic wallpaper from GNOME Settings -> Background."
@@ -398,6 +424,20 @@ fi
 if [ "$INSTALL_TERMINAL" = true ]; then
     if [ -f "$SCRIPT_DIR/scripts/setup-terminal.sh" ]; then
         bash "$SCRIPT_DIR/scripts/setup-terminal.sh" "${THEME_VARIANT:-transparent}"
+    fi
+fi
+
+# 5b. Setup Shell Configuration (.bashrc & Starship)
+if [ "$INSTALL_SHELL" = true ]; then
+    if [ -f "$SCRIPT_DIR/scripts/setup-shell.sh" ]; then
+        bash "$SCRIPT_DIR/scripts/setup-shell.sh"
+    fi
+
+    # If only --shell was specified, finish immediately without logout prompt
+    if [ "$INSTALL_THEME" != true ] && [ "$INSTALL_LIBADWAITA" != true ] && [ "$INSTALL_ICONS" != true ] && [ "$INSTALL_WALLPAPERS" != true ] && [ "$INSTALL_EXTENSIONS" != true ] && [ "$INSTALL_TERMINAL" != true ] && [ "$INSTALL_CONFIGS" != true ] && [ "$INSTALL_FLATPAK" != true ]; then
+        echo ""
+        echo "Shell configuration complete! Run 'source ~/.bashrc' to load changes."
+        exit 0
     fi
 fi
 
